@@ -107,7 +107,19 @@ def register():
     
     return render_template('admin/register.html')
 
+# halaman produk buah
+@app.route('/pageProduct')
+@login_required
+@role_required('user')
+def pageProduct():
+    return render_template('page/product.html')
 
+# halaman detail buah
+@app.route('/detail')
+@login_required
+@role_required('user')
+def detail():
+    return render_template('page/detail.html')
 
 
 
