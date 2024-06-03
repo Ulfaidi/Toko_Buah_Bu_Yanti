@@ -135,6 +135,12 @@ def about():
 def contact():
     return render_template('page/kontak.html')
 
+# Halaman Dashboard
+@app.route('/dashboard')
+@login_required
+@role_required('admin')
+def dashboard():
+    return render_template('admin/dashboard.html', current_route=request.path)
 
 
 
