@@ -107,12 +107,17 @@ def register():
     
     return render_template('admin/register.html')
 
+# halaman home
+@app.route('/')
+def home():
+    return render_template('page/home.html') #kurangnya loopingan
+
 # halaman produk buah
 @app.route('/pageProduct')
 @login_required
 @role_required('user')
 def pageProduct():
-    return render_template('page/product.html')
+    return render_template('page/product.html') #kurangnya loopingan
 
 # halaman detail buah
 @app.route('/detail')
@@ -123,15 +128,11 @@ def detail():
 
 # halaman about (tentang kami)
 @app.route('/about')
-@login_required
-@role_required('user')
 def about():
     return render_template('page/about.html')
 
 # halaman kontak
 @app.route('/contact')
-@login_required
-@role_required('user')
 def contact():
     return render_template('page/kontak.html')
 
