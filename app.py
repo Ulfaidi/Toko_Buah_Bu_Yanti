@@ -143,8 +143,8 @@ def contact():
 def dashboard():
     return render_template('admin/dashboard.html', current_route=request.path)
 
-# Produk ###############################################################################################
-# Halaman Produk ###############################################################################################
+
+# Halaman Produk
 @app.route('/product')
 @login_required
 @role_required('admin')
