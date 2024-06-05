@@ -242,6 +242,97 @@ def deleteProduct(_id):
     return redirect(url_for("product"))
 
 
+# Supplier ###############################################################################################
+# Halaman Suplier ###############################################################################################
+@app.route('/supplier')
+@login_required
+@role_required('admin')
+def supplier():
+    suppliers = list(db.suppliers.find())
+    return render_template('admin/supplier/supplier.html', suppliers=suppliers, current_route=request.path)
+
+@app.route('/addSupplier', methods=['GET','POST'])
+@login_required
+@role_required('admin')
+def addSupplier():
+    supplier_exists = False
+
+    if request.method=='POST':
+        nama = request.form['nama']
+        alamat = request.form['alamat']
+        noTelp = request.form['noTelp']
+        nama_gambar = request.files['gambar']
+
+        # Periksa apakah Nama Barang dengan nama yang sama sudah ada
+        existing_supplier = db.suppliers.find_one({'nama': nama})
+        if existing_supplier:
+            supplier_exists = True
+        else:
+            if nama_gambar:
+                nama_file_asli = nama_gambar.filename
+                nama_file_gambar = nama_file_asli.split('/')[-1]
+                file_path = f'static/assets/imgSuppliers/{nama_file_gambar}'
+                nama_gambar.save(file_path)
+            else:
+                nama_file_gambar = None
+            
+            doc = {
+                'nama':nama,
+                'alamat':alamat,
+                'gambar': nama_file_gambar,
+                'noTelp': noTelp,
+            }
+            db.suppliers.insert_one(doc)
+            return redirect(url_for("supplier"))
+
+    return render_template('admin/supplier/addSupplier.html', supplier_exists=supplier_exists)
+
+@app.route('/editSupplier/<_id>', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def editSupplier(_id):
+    supplier_exists = False
+
+    if request.method == 'POST':
+        id = request.form['_id']  
+        nama = request.form['nama']
+        alamat = request.form['alamat']
+        noTelp = request.form['noTelp']
+        nama_gambar = request.files['gambar']
+
+        # Periksa apakah Nama Supplier dengan nama yang sama sudah ada
+        existing_supplier = db.suppliers.find_one({'nama': nama, '_id': {'$ne': ObjectId(id)}})
+        if existing_supplier:
+            supplier_exists = True
+        else:
+            doc = {
+                'nama': nama,
+                'alamat': alamat,
+                'noTelp': noTelp,
+            }
+            if nama_gambar:
+                nama_file_asli = nama_gambar.filename
+                nama_file_gambar = nama_file_asli.split('/')[-1]
+                file_path = f'static/assets/imgSuppliers/{nama_file_gambar}'
+                nama_gambar.save(file_path)
+                doc['gambar'] = nama_file_gambar
+
+            db.suppliers.update_one({"_id": ObjectId(id)}, {"$set": doc}) 
+            return redirect(url_for("supplier"))
+
+    id = ObjectId(_id)
+    data = list(db.suppliers.find({"_id": id}))
+    return render_template('admin/supplier/editSupplier.html', data=data, supplier_exists=supplier_exists)
+
+@app.route('/deleteSupplier/<_id>', methods=['GET','POST'])
+@login_required
+@role_required('admin')
+def deleteSupplier(_id):
+    _id = ObjectId(_id)
+    db.suppliers.delete_one({"_id": ObjectId(_id)})
+    return redirect(url_for("supplier"))
+
+
 
 
 
