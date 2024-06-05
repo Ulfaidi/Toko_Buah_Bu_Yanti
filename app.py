@@ -143,6 +143,104 @@ def contact():
 def dashboard():
     return render_template('admin/dashboard.html', current_route=request.path)
 
+# Produk ###############################################################################################
+# Halaman Produk ###############################################################################################
+@app.route('/product')
+@login_required
+@role_required('admin')
+def product():
+    products = list(db.products.find())
+    return render_template('admin/product/product.html', products=products, current_route=request.path)
+
+@app.route('/addProduct', methods=['GET','POST'])
+@login_required
+@role_required('admin')
+def addProduct():
+    product_exists = False
+
+    if request.method=='POST':
+        nama = request.form['nama']
+        satuan = request.form['satuan']
+        harga = request.form['harga']
+        deskripsi = request.form['deskripsi']
+        nama_gambar = request.files['gambar']
+        stok = int(request.form.get('stok', 0))
+
+        # Periksa apakah Nama Barang dengan nama yang sama sudah ada
+        existing_product = db.products.find_one({'nama': nama})
+        if existing_product:
+            product_exists = True
+        else:
+            if nama_gambar:
+                nama_file_asli = nama_gambar.filename
+                nama_file_gambar = nama_file_asli.split('/')[-1]
+                file_path = f'static/assets/imgProducts/{nama_file_gambar}'
+                nama_gambar.save(file_path)
+            else:
+                nama_file_gambar = None
+            
+            doc = {
+                'nama':nama,
+                'gambar': nama_file_gambar,
+                'satuan': satuan,
+                'harga': harga,
+                'deskripsi': deskripsi,
+                'stok': stok
+            }
+            db.products.insert_one(doc)
+            return redirect(url_for("product"))
+
+    return render_template('admin/product/addProduct.html', product_exists=product_exists)
+
+@app.route('/editProduct/<_id>', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def editProduct(_id):
+    product_exists = False
+
+    if request.method == 'POST':
+        id = request.form['_id']  
+        nama = request.form['nama']
+        satuan = request.form['satuan']
+        harga = request.form['harga']
+        deskripsi = request.form['deskripsi']
+        nama_gambar = request.files['gambar']
+        stok = int(request.form.get('stok', 0))
+
+        # Periksa apakah Nama Barang dengan nama yang sama sudah ada
+        existing_product = db.products.find_one({'nama': nama, '_id': {'$ne': ObjectId(id)}})
+        if existing_product:
+            product_exists = True
+        else:
+            doc = {
+                'nama': nama,
+                'satuan': satuan,
+                'harga': harga,
+                'deskripsi': deskripsi
+            }
+            if nama_gambar:
+                nama_file_asli = nama_gambar.filename
+                nama_file_gambar = nama_file_asli.split('/')[-1]
+                file_path = f'static/assets/imgProducts/{nama_file_gambar}'
+                nama_gambar.save(file_path)
+                doc['gambar'] = nama_file_gambar
+
+            db.products.update_one({"_id": ObjectId(id)}, {"$set": doc}) 
+            return redirect(url_for("product"))
+
+    id = ObjectId(_id)
+    data = list(db.products.find({"_id": id}))
+    return render_template('admin/product/editProduct.html', data=data, product_exists=product_exists)
+
+
+@app.route('/deleteProduct/<_id>', methods=['GET','POST'])
+@login_required
+@role_required('admin')
+def deleteProduct(_id):
+    _id = ObjectId(_id)
+    db.products.delete_one({"_id": ObjectId(_id)})
+    return redirect(url_for("product"))
+
 
 
 
