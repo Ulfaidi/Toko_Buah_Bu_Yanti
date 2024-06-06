@@ -489,6 +489,11 @@ def get_product(product_id):
     else:
         return jsonify({'error': 'Product not found'}), 404
 
+@app.route('/addPembelian', methods=['GET','POST'])
+@login_required
+@role_required('admin')
+def addPembelian():
+    return redirect(url_for("pembelian"))
 
 if __name__ == '__main__':
     app.run(debug=True)
