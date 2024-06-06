@@ -332,6 +332,53 @@ def deleteSupplier(_id):
     db.suppliers.delete_one({"_id": ObjectId(_id)})
     return redirect(url_for("supplier"))
 
+# Stock ###############################################################################################
+# Halaman Stock ###############################################################################################
+@app.route('/stock')
+@login_required
+@role_required('admin')
+def stock():
+    products = list(db.products.find())
+    return render_template('admin/stock/stock.html', products=products, current_route=request.path)
+
+def get_supplier_name(supplier_id):
+    supplier = db.suppliers.find_one({'_id': ObjectId(supplier_id)})
+    if supplier:
+        return supplier['nama']
+    else:
+        return None
+
+@app.route('/editStock/<_id>', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def editStock(_id):
+    if request.method == 'POST':
+        id = ObjectId(_id)
+        pengurangan = int(request.form['pengurangan'])
+        keterangan = request.form['keterangan']
+
+        # Simpan informasi pengurangan stok dan keterangan (jika ada) ke dalam tabel lain
+        if pengurangan > 0:
+            pengurangan_doc = {
+                'nama_barang': db.products.find_one({'_id': id})['nama'],
+                'jumlah_pengurangan': pengurangan,
+                'keterangan': keterangan
+            }
+            db.pengurangan.insert_one(pengurangan_doc)
+
+            # Kurangi stok di koleksi 'products'
+            db.products.update_one(
+                {'_id': id},
+                {'$inc': {'stok': -pengurangan}}
+            )
+
+        return redirect(url_for('stock'))
+
+    # Jika metode adalah GET, tampilkan halaman editStock.html dengan data produk yang sesuai
+    id = ObjectId(_id)
+    product = db.products.find_one({'_id': id})
+    return render_template('admin/stock/editStock.html', product=product)
+
 
 
 if __name__ == '__main__':
