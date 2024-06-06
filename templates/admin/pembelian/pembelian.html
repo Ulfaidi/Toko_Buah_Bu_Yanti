@@ -1,0 +1,314 @@
+{% include 'admin/templates/header.html' %}
+<div class="container-fluid custom-container mt-2">
+  <form method="POST" action="{{ url_for('addPembelian') }}" enctype="multipart/form-data">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="row d-flex align-items-center h-100">
+          <h6>Kode Pembelian : <span data-field="purchase_code" id="purchaseCode"></span></h6>
+        </div>
+      </div>
+      <div class="col-lg-6 d-flex align-items-center">
+        <h6>Tanggal Pembelian : <span>{{ current_date }}</span></h6>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <!-- Product Details Card -->
+        <div class="card" id="productDetails">
+          <div class="card-header pb-0">
+            <div class="row">
+              <div class="col-lg-3">
+                <h6>Data Produk</h6>
+                <div class="avatar avatar-xl position-relative">
+                  <img id="productImage" src="../static/assets/img/default.jpg" alt="Product Image" class="w-100 border-radius-lg shadow-sm" height="75" />
+                </div>
+              </div>
+              <div class="col-lg-9 col-7">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td><label for="productSelect">Pilih Produk:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <select class="form-control" id="productSelect" name="product" onchange="fetchProductDetails()">
+                            <option value="">--Select a Product--</option>
+                            {% for product in products %}
+                            <option value="{{ product._id }}">{{ product.nama }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="productUnit">Satuan:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="productUnit" name="satuan" readonly />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="productPrice">Harga:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="productPrice" name="harga" />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="productStock">Jumlah:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="productStock" name="stok" oninput="calculateTotalPrice()" />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="totalPrice">Total Harga:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="totalPrice" name="totalHarga" readonly />
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card-body pb-1"></div>
+        </div>
+
+        <!-- Supplier Details Card -->
+        <div class="card mt-2" id="supplierDetails">
+          <div class="card-header pb-0">
+            <div class="row">
+              <div class="col-lg-3">
+                <h6>Data Supplier</h6>
+                <div class="avatar avatar-xl position-relative">
+                  <img id="supplierImage" src="../static/assets/img/default.jpg" alt="Supplier Image" class="w-100 border-radius-lg shadow-sm" height="75" />
+                </div>
+              </div>
+              <div class="col-lg-9 col-7">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td><label for="supplierSelect">Pilih Supplier:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <select class="form-control" id="supplierSelect" name="supplier" onchange="fetchSupplierDetails()">
+                            <option value="">--Select a Supplier--</option>
+                            {% for supplier in suppliers %}
+                            <option value="{{ supplier._id }}">{{ supplier.nama }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="supplierAlamat">Alamat:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="supplierAlamat" name="alamat" readonly />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="supplierNo">Nomor Telepon:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="supplierNo" name="noTelp" readonly />
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button id="saveSupplierDetails" type="button" class="btn btn-primary mt-2" disabled>Simpan</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2"></div>
+        </div>
+      </div>
+
+      <!-- Table Detail Pembelian Card -->
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header pb-0">
+            <div class="row">
+              <div class="col-lg-6 col-7">
+                <h6>Table Detail Pembelian</h6>
+              </div>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive">
+              <table id="purchaseDetailsTable" class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Kode Pembelian</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Supplier</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Produk</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Harga</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Jumlah</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Total Harga</th>
+                  </tr>
+                </thead>
+                <tbody id="purchaseDetailsBody">
+                  <!-- Example row, you can add more rows dynamically as needed -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Simpan</button>
+        <a href="{{ url_for('pembelian') }}" class="btn btn-secondary mt-2">Kembali</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  let savedPurchaseCodes = {}; // Object to store saved purchase codes
+  
+  function fetchProductDetails() {
+    const productId = document.getElementById("productSelect").value;
+    if (productId) {
+      fetch(`/product/${productId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("productImage").src = `../static/assets/imgProducts/${data.gambar}`;
+          document.getElementById("productUnit").value = data.satuan;
+          document.getElementById("productPrice").value = data.harga;
+          document.getElementById("productStock").value = data.stok;
+          calculateTotalPrice();
+        })
+        .catch((error) => console.error("Error:", error));
+    } else {
+      resetProductDetails();
+    }
+  }
+  
+  function resetProductDetails() {
+    document.getElementById("productImage").src = "../static/assets/img/default.jpg";
+    document.getElementById("productUnit").value = "";
+    document.getElementById("productPrice").value = "";
+    document.getElementById("productStock").value = "";
+    document.getElementById("totalPrice").value = "";
+  }
+  
+  function calculateTotalPrice() {
+    const price = parseFloat(document.getElementById("productPrice").value) || 0;
+    const quantity = parseFloat(document.getElementById("productStock").value) || 0;
+    const total = price * quantity;
+    document.getElementById("totalPrice").value = total;
+  }
+  
+  function fetchSupplierDetails() {
+    const supplierId = document.getElementById("supplierSelect").value;
+    if (supplierId) {
+      fetch(`/supplier/${supplierId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById("supplierAlamat").value = data.alamat;
+          document.getElementById("supplierImage").src = `../static/assets/imgSuppliers/${data.gambar}`;
+          document.getElementById("supplierNo").value = data.noTelp;
+  
+          const purchaseCode = savedPurchaseCodes[supplierId] || generatePurchaseCode();
+          savedPurchaseCodes[supplierId] = purchaseCode;
+          document.getElementById("purchaseCode").textContent = purchaseCode;
+  
+          const saveButton = document.getElementById("saveSupplierDetails");
+          saveButton.disabled = false;
+          saveButton.addEventListener("click", function () {
+            savePurchaseDetails(data, supplierId, purchaseCode);
+          }, { once: true });
+        })
+        .catch((error) => console.error("Error:", error));
+    } else {
+      resetSupplierDetails();
+    }
+  }
+  
+  function resetSupplierDetails() {
+    document.getElementById("supplierAlamat").value = "";
+    document.getElementById("supplierImage").src = "../static/assets/img/default.jpg";
+    document.getElementById("supplierNo").value = "";
+    document.getElementById("saveSupplierDetails").disabled = true;
+  }
+  
+  function savePurchaseDetails(supplierData, supplierId, purchaseCode) {
+    const productName = document.getElementById("productSelect").options[document.getElementById("productSelect").selectedIndex].text;
+    const productPrice = document.getElementById("productPrice").value;
+    const productStock = document.getElementById("productStock").value;
+    const totalPrice = document.getElementById("totalPrice").value;
+  
+    const purchaseDetailsTable = document.getElementById("purchaseDetailsTable");
+    const tbody = purchaseDetailsTable.querySelector("tbody");
+  
+    // Generate a unique identifier for each supplier transaction
+    const uniquePurchaseCode = `${purchaseCode}-${supplierId}`;
+  
+    // Find an existing row with the same unique identifier
+    let existingRow = Array.from(tbody.rows).find(row => row.dataset.purchaseCode === uniquePurchaseCode);
+  
+    if (!existingRow) {
+      // If no existing row is found, create a new one with the unique identifier
+      existingRow = document.createElement("tr");
+      existingRow.dataset.purchaseCode = uniquePurchaseCode;
+      existingRow.innerHTML = `
+        <td>${purchaseCode}</td>
+        <td>${supplierData.nama}</td>
+        <td>${productName}</td>
+        <td>Rp ${productPrice}</td>
+        <td>${productStock}</td>
+        <td>Rp ${totalPrice}</td>
+      `;
+      tbody.appendChild(existingRow);
+    } else {
+      // If an existing row is found, append a new row with empty cells for purchase code and supplier name
+      const newRow = document.createElement("tr");
+      newRow.dataset.purchaseCode = uniquePurchaseCode;
+      newRow.innerHTML = `
+        <td></td>
+        <td></td>
+        <td>${productName}</td>
+        <td>Rp ${productPrice}</td>
+        <td>${productStock}</td>
+        <td>Rp ${totalPrice}</td>
+      `;
+      tbody.appendChild(newRow);
+    }
+  
+    resetForm();
+  }
+  
+
+  function resetForm() {
+    // Reset the product details
+    resetProductDetails();
+  
+    // Reset the supplier details
+    resetSupplierDetails();
+  
+    // Reset the product select
+    document.getElementById("productSelect").value = "";
+  
+    // Reset the supplier select
+    document.getElementById("supplierSelect").value = "";
+  
+    // Clear the purchase code
+    document.getElementById("purchaseCode").textContent = "";
+  }
+  
+  function generatePurchaseCode() {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const length = 10;
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  }
+</script>
+{% include 'admin/templates/footer.html' %}

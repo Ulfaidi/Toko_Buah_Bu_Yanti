@@ -453,6 +453,42 @@ def editStock(_id):
     return render_template('admin/stock/editStock.html', product=product)
 
 
+# pembelian ###############################################################################################
+# Halaman pembelian ###############################################################################################
+@app.route('/pembelian')
+@login_required
+@role_required('admin')
+def pembelian():
+    suppliers = list(db.suppliers.find())
+    products = list(db.products.find())
+
+    purchase_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    current_date = datetime.now().strftime("%d-%m-%Y")
+
+    return render_template('admin/pembelian/pembelian.html', products=products, suppliers=suppliers, current_route=request.path, purchase_code=purchase_code, current_date=current_date)
+
+@app.route('/supplier/<supplier_id>')
+@login_required
+@role_required('admin')
+def get_supplier(supplier_id):
+    supplier = db.suppliers.find_one({'_id': ObjectId(supplier_id)})
+    if supplier:
+        supplier['_id'] = str(supplier['_id'])
+        return jsonify(supplier)
+    else:
+        return jsonify({'error': 'Supplier not found'}), 404
+
+@app.route('/product/<product_id>')
+@login_required
+@role_required('admin')
+def get_product(product_id):
+    product = db.products.find_one({'_id': ObjectId(product_id)})
+    if product:
+        product['_id'] = str(product['_id'])
+        return jsonify(product)
+    else:
+        return jsonify({'error': 'Product not found'}), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
