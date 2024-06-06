@@ -71,6 +71,79 @@ def loginAdmin():
     return render_template('admin/login.html')
 
 
+# Halaman Create Admin dan User
+@app.route('/user')
+@login_required
+@role_required('admin')
+def user():
+    users = list(db.users.find())
+    return render_template('admin/user/user.html', users=users, current_route=request.path)
+
+@app.route('/addUser', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def addUser():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form['role']
+
+        hashed_password = generate_password_hash(password)
+
+        user_document = {
+            '_id': username,
+            'username': username,
+            'password': hashed_password,
+            'role': role
+        }
+
+        try:
+            db.users.insert_one(user_document)
+        except:
+            flash('Username already exists')
+            return redirect(url_for('user'))
+
+        return redirect(url_for('user'))
+    return render_template('admin/user/addUser.html')
+
+@app.route('/editUser/<_id>', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def editUser(_id):
+    user = db.users.find_one({"_id": _id})
+    if request.method == 'POST':
+        username = request.form['username']
+        role = request.form['role']
+        password = request.form['password']
+
+        update_fields = {
+            'username': username,
+            'role': role
+        }
+
+        if password:
+            hashed_password = generate_password_hash(password)
+            update_fields['password'] = hashed_password
+            update_fields['password_length'] = len(password)  # Store the length of the new password
+
+        try:
+            db.users.update_one({"_id": _id}, {"$set": update_fields})
+            flash("User updated successfully")
+        except Exception as e:
+            flash(f"An error occurred: {e}")
+
+        return redirect(url_for('user'))
+
+    return render_template('admin/user/editUser.html', user=user)
+
+@app.route('/deleteUser/<_id>', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def deleteUser(_id):
+    db.users.delete_one({"_id": _id})
+    return redirect(url_for("user"))
+
+
 # Halaman register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
