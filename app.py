@@ -70,7 +70,6 @@ def loginAdmin():
         flash('Invalid username or password')
     return render_template('admin/login.html')
 
-
 # Halaman Create Admin dan User
 @app.route('/user')
 @login_required
@@ -144,6 +143,7 @@ def deleteUser(_id):
     return redirect(url_for("user"))
 
 
+
 # Halaman register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -180,32 +180,38 @@ def register():
     
     return render_template('admin/register.html')
 
-# halaman home
+
+# Halaman logout
+@app.route('/logoutAdmin')
+def logout():
+    session.clear()
+    return redirect(url_for('dashboard'))
+
 @app.route('/')
 def home():
-    return render_template('page/home.html') #kurangnya loopingan
+    return render_template('page/home.html')
 
-# halaman produk buah
 @app.route('/pageProduct')
 @login_required
 @role_required('user')
 def pageProduct():
-    return render_template('page/product.html') #kurangnya loopingan
+    return render_template('page/product.html')
 
-# halaman detail buah
 @app.route('/detail')
 @login_required
 @role_required('user')
 def detail():
     return render_template('page/detail.html')
 
-# halaman about (tentang kami)
 @app.route('/about')
+@login_required
+@role_required('user')
 def about():
     return render_template('page/about.html')
 
-# halaman kontak
 @app.route('/contact')
+@login_required
+@role_required('user')
 def contact():
     return render_template('page/kontak.html')
 
@@ -216,8 +222,8 @@ def contact():
 def dashboard():
     return render_template('admin/dashboard.html', current_route=request.path)
 
-
-# Halaman Produk
+# Produk ###############################################################################################
+# Halaman Produk ###############################################################################################
 @app.route('/product')
 @login_required
 @role_required('admin')
@@ -313,7 +319,6 @@ def deleteProduct(_id):
     _id = ObjectId(_id)
     db.products.delete_one({"_id": ObjectId(_id)})
     return redirect(url_for("product"))
-
 
 # Supplier ###############################################################################################
 # Halaman Suplier ###############################################################################################
@@ -517,6 +522,27 @@ def addPembelian():
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
