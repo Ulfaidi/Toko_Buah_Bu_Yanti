@@ -503,6 +503,16 @@ def addPembelian():
                 item['jumlah'] = int(item['jumlah'])
                 item['total_harga'] = int(item['total_harga'])
 
+                # Update the stock in the product collection
+                product_id = item['_id']  # Assuming product_id is included in the items
+                product = db.products.find_one({"_id": ObjectId(product_id)})
+                if product:
+                    new_stock = product['stok'] + item['jumlah']
+                    db.products.update_one(
+                        {"_id": ObjectId(product_id)},
+                        {"$set": {"stok": new_stock}}
+                    )
+
         db.purchases.insert_many(pembelian)
         return jsonify({"success": True})
     except Exception as e:

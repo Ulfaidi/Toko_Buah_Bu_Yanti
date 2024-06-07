@@ -13,8 +13,58 @@
     </div>
     <div class="row">
       <div class="col-lg-6">
+        <!-- Supplier Details Card -->
+        <div class="card mt-2" id="supplierDetails">
+          <div class="card-header pb-0">
+            <div class="row">
+              <div class="col-lg-3">
+                <h6>Data Supplier</h6>
+                <div class="avatar avatar-xl position-relative">
+                  <img id="supplierImage" src="../static/assets/img/default.jpg" alt="Supplier Image" class="w-100 border-radius-lg shadow-sm" height="75" />
+                </div>
+              </div>
+              <div class="col-lg-9 col-7">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td><label for="supplierSelect">Pilih Supplier:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <select class="form-control" id="supplierSelect" name="supplier" onchange="fetchSupplierDetails()">
+                            <option value="">--Select a Supplier--</option>
+                            {% for supplier in suppliers %}
+                            <option value="{{ supplier._id }}">{{ supplier.nama }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="supplierAlamat">Alamat:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="supplierAlamat" name="alamat" readonly />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="supplierNo">Nomor Telepon:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="supplierNo" name="noTelp" readonly />
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2"></div>
+        </div>
+
         <!-- Product Details Card -->
-        <div class="card" id="productDetails">
+        <div class="card mt-2" id="productDetails">
           <div class="card-header pb-0">
             <div class="row">
               <div class="col-lg-3">
@@ -73,67 +123,17 @@
                     </tr>
                   </tbody>
                 </table>
+                <button id="saveSupplierDetails" type="button" class="btn btn-primary mt-2" disabled>Tambah</button>
               </div>
             </div>
           </div>
           <div class="card-body pb-1"></div>
         </div>
-
-        <!-- Supplier Details Card -->
-        <div class="card mt-2" id="supplierDetails">
-          <div class="card-header pb-0">
-            <div class="row">
-              <div class="col-lg-3">
-                <h6>Data Supplier</h6>
-                <div class="avatar avatar-xl position-relative">
-                  <img id="supplierImage" src="../static/assets/img/default.jpg" alt="Supplier Image" class="w-100 border-radius-lg shadow-sm" height="75" />
-                </div>
-              </div>
-              <div class="col-lg-9 col-7">
-                <table class="table">
-                  <tbody>
-                    <tr>
-                      <td><label for="supplierSelect">Pilih Supplier:</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <select class="form-control" id="supplierSelect" name="supplier" onchange="fetchSupplierDetails()">
-                            <option value="">--Select a Supplier--</option>
-                            {% for supplier in suppliers %}
-                            <option value="{{ supplier._id }}">{{ supplier.nama }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="supplierAlamat">Alamat:</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <input type="text" class="form-control" id="supplierAlamat" name="alamat" readonly />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="supplierNo">Nomor Telepon:</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <input type="text" class="form-control" id="supplierNo" name="noTelp" readonly />
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <button id="saveSupplierDetails" type="button" class="btn btn-primary mt-2" disabled>Simpan</button>
-              </div>
-            </div>
-          </div>
-          <div class="card-body px-0 pb-2"></div>
-        </div>
       </div>
 
       <!-- Table Detail Pembelian Card -->
       <div class="col-lg-6">
-        <div class="card">
+        <div class="card mt-2">
           <div class="card-header pb-0">
             <div class="row">
               <div class="col-lg-6 col-7">
@@ -143,7 +143,7 @@
           </div>
           <div class="card-body px-0 pb-2">
             <div class="table-responsive">
-              <table id="purchaseDetailsTable" class="table align-items-center mb-0">
+              <table id="purchaseDetailsTable" class="table align-items-center text-center mb-0">
                 <thead>
                   <tr>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Kode Pembelian</th>
@@ -162,15 +162,15 @@
           </div>
         </div>
         <button type="submit" class="btn btn-primary mt-2">Simpan</button>
-        <a href="{{ url_for('pembelian') }}" class="btn btn-secondary mt-2">Kembali</a>
+        <a id="resetButton" class="btn btn-secondary mt-2">Kosong</a>
       </div>
     </div>
   </form>
 </div>
 
 <script>
-  let savedPurchaseCodes = {}; // Object to store saved purchase codes
-  let reportDetails = []; // Array to store report details
+  let savedPurchaseCodes = {};
+  let reportDetails = [];
   let purchaseData = {};
 
   function fetchProductDetails() {
@@ -181,13 +181,13 @@
         .then((data) => {
           document.getElementById("productImage").src = `../static/assets/imgProducts/${data.gambar}`;
           document.getElementById("productUnit").value = data.satuan;
-          document.getElementById("productPrice").value = data.harga;
-          document.getElementById("productStock").value = data.stok;
           calculateSubtotal();
+          document.getElementById("saveSupplierDetails").disabled = false;
         })
         .catch((error) => console.error("Error:", error));
     } else {
       resetProductDetails();
+      document.getElementById("saveSupplierDetails").disabled = true;
     }
   }
 
@@ -219,16 +219,6 @@
           const purchaseCode = savedPurchaseCodes[supplierId] || generatePurchaseCode();
           savedPurchaseCodes[supplierId] = purchaseCode;
           document.getElementById("purchaseCode").textContent = purchaseCode;
-
-          const saveButton = document.getElementById("saveSupplierDetails");
-          saveButton.disabled = false;
-          saveButton.addEventListener(
-            "click",
-            function () {
-              savePurchaseDetails(data, supplierId, purchaseCode);
-            },
-            { once: true }
-          );
         })
         .catch((error) => console.error("Error:", error));
     } else {
@@ -240,11 +230,21 @@
     document.getElementById("supplierAlamat").value = "";
     document.getElementById("supplierImage").src = "../static/assets/img/default.jpg";
     document.getElementById("supplierNo").value = "";
-    document.getElementById("saveSupplierDetails").disabled = true;
   }
 
-  function savePurchaseDetails(supplierData, supplierId, purchaseCode) {
-    const productName = document.getElementById("productSelect").options[document.getElementById("productSelect").selectedIndex].text;
+  function resetProductForm() {
+    // Reset product details only
+    resetProductDetails();
+    // Reset the product select
+    document.getElementById("productSelect").value = "";
+  }
+
+  function savePurchaseDetails() {
+    const supplierId = document.getElementById("supplierSelect").value;
+    const purchaseCode = document.getElementById("purchaseCode").textContent;
+    const productSelect = document.getElementById("productSelect");
+    const productName = productSelect.options[productSelect.selectedIndex].text;
+    const productId = productSelect.value; // Get the selected product ID
     const productPrice = parseFloat(document.getElementById("productPrice").value);
     const productStock = parseInt(document.getElementById("productStock").value);
     const subtotal = parseFloat(document.getElementById("subtotal").value);
@@ -252,13 +252,14 @@
 
     if (!purchaseData[purchaseCode]) {
       purchaseData[purchaseCode] = {
-        supplier: supplierData.nama,
+        supplier: document.getElementById("supplierSelect").options[document.getElementById("supplierSelect").selectedIndex].text,
         tanggal_pembelian: purchaseDate,
         items: [],
       };
     }
 
     purchaseData[purchaseCode].items.push({
+      _id: productId,
       produk: productName,
       harga: productPrice,
       jumlah: productStock,
@@ -270,16 +271,16 @@
 
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
-      <td>${purchaseCode}</td>
-      <td>${supplierData.nama}</td>
-      <td>${productName}</td>
-      <td>Rp ${productPrice}</td>
-      <td>${productStock}</td>
-      <td>Rp ${subtotal}</td>
+        <td>${purchaseCode}</td>
+        <td>${purchaseData[purchaseCode].supplier}</td>
+        <td>${productName}</td>
+        <td>Rp ${productPrice}</td>
+        <td>${productStock}</td>
+        <td>Rp ${subtotal}</td>
     `;
     tbody.appendChild(newRow);
 
-    resetForm();
+    resetProductForm();
   }
 
   document.getElementById("purchaseForm").addEventListener("submit", function (event) {
@@ -287,21 +288,27 @@
     submitReport();
   });
 
+  document.getElementById("saveSupplierDetails").addEventListener("click", function () {
+    savePurchaseDetails();
+  });
+
+  document.getElementById("resetButton").addEventListener("click", function () {
+    resetForm();
+  });
+
   function resetForm() {
-    // Reset the product details
     resetProductDetails();
 
-    // Reset the supplier details
     resetSupplierDetails();
 
-    // Reset the product select
     document.getElementById("productSelect").value = "";
-
-    // Reset the supplier select
     document.getElementById("supplierSelect").value = "";
 
-    // Clear the purchase code
     document.getElementById("purchaseCode").textContent = "";
+
+    purchaseData = {};
+
+    document.getElementById("purchaseDetailsBody").innerHTML = "";
   }
 
   function generatePurchaseCode() {
@@ -335,6 +342,7 @@
           alert("Report submitted successfully!");
           document.getElementById("purchaseDetailsBody").innerHTML = "";
           purchaseData = {};
+          resetForm();
         } else {
           alert("Error submitting report: " + data.error);
         }
@@ -342,4 +350,5 @@
       .catch((error) => console.error("Error:", error));
   }
 </script>
+
 {% include 'admin/templates/footer.html' %}
