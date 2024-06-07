@@ -489,11 +489,24 @@ def get_product(product_id):
     else:
         return jsonify({'error': 'Product not found'}), 404
 
-@app.route('/addPembelian', methods=['GET','POST'])
-@login_required
-@role_required('admin')
+@app.route('/addPembelian', methods=['POST'])
 def addPembelian():
-    return redirect(url_for("pembelian"))
+    try:
+        data = request.json
+        pembelian = data.get('pembelian', [])
+
+        for pembelian_item in pembelian:
+            # Convert the date string to datetime object and then format it
+            pembelian_item['tanggal_pembelian'] = datetime.strptime(pembelian_item['tanggal_pembelian'], '%Y-%m-%d').strftime('%d-%m-%Y')
+            for item in pembelian_item['items']:
+                item['harga'] = int(item['harga'])
+                item['jumlah'] = int(item['jumlah'])
+                item['total_harga'] = int(item['total_harga'])
+
+        db.purchases.insert_many(pembelian)
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

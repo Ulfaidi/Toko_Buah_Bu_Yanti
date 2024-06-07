@@ -1,6 +1,6 @@
 {% include 'admin/templates/header.html' %}
 <div class="container-fluid custom-container mt-2">
-  <form method="POST" action="{{ url_for('addPembelian') }}" enctype="multipart/form-data">
+  <form id="purchaseForm" enctype="multipart/form-data">
     <div class="row">
       <div class="col-lg-6">
         <div class="row d-flex align-items-center h-100">
@@ -13,6 +13,71 @@
     </div>
     <div class="row">
       <div class="col-lg-6">
+        <!-- Product Details Card -->
+        <div class="card" id="productDetails">
+          <div class="card-header pb-0">
+            <div class="row">
+              <div class="col-lg-3">
+                <h6>Data Produk</h6>
+                <div class="avatar avatar-xl position-relative">
+                  <img id="productImage" src="../static/assets/img/default.jpg" alt="Product Image" class="w-100 border-radius-lg shadow-sm" height="75" />
+                </div>
+              </div>
+              <div class="col-lg-9 col-7">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td><label for="productSelect">Pilih Produk:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <select class="form-control" id="productSelect" name="product" onchange="fetchProductDetails()">
+                            <option value="">--Select a Product--</option>
+                            {% for product in products %}
+                            <option value="{{ product._id }}">{{ product.nama }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="productUnit">Satuan:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="productUnit" name="satuan" readonly />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="productPrice">Harga:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="productPrice" name="harga" />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="productStock">Jumlah:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="productStock" name="stok" oninput="calculateSubtotal()" />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="subtotal">Subtotal:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <input type="text" class="form-control" id="subtotal" name="totalHarga" readonly />
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card-body pb-1"></div>
+        </div>
 
         <!-- Supplier Details Card -->
         <div class="card mt-2" id="supplierDetails">
@@ -64,77 +129,11 @@
           </div>
           <div class="card-body px-0 pb-2"></div>
         </div>
-
-        <!-- Product Details Card -->
-        <div class="card mt-2" id="productDetails">
-          <div class="card-header pb-0">
-            <div class="row">
-              <div class="col-lg-3">
-                <h6>Data Produk</h6>
-                <div class="avatar avatar-xl position-relative">
-                  <img id="productImage" src="../static/assets/img/default.jpg" alt="Product Image" class="w-100 border-radius-lg shadow-sm" height="75" />
-                </div>
-              </div>
-              <div class="col-lg-9 col-7">
-                <table class="table">
-                  <tbody>
-                    <tr>
-                      <td><label for="productSelect">Pilih Produk:</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <select class="form-control" id="productSelect" name="product" onchange="fetchProductDetails()">
-                            <option value="">--Select a Product--</option>
-                            {% for product in products %}
-                            <option value="{{ product._id }}">{{ product.nama }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="productUnit">Satuan:</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <input type="text" class="form-control" id="productUnit" name="satuan" readonly />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="productPrice">Harga:</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <input type="text" class="form-control" id="productPrice" name="harga" />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="productStock">Jumlah:</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <input type="text" class="form-control" id="productStock" name="stok" oninput="calculateTotalPrice()" />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="totalPrice">Total Harga:</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <input type="text" class="form-control" id="totalPrice" name="totalHarga" readonly />
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <div class="card-body pb-1"></div>
-        </div>
       </div>
 
       <!-- Table Detail Pembelian Card -->
       <div class="col-lg-6">
-        <div class="card mt-2">
+        <div class="card">
           <div class="card-header pb-0">
             <div class="row">
               <div class="col-lg-6 col-7">
@@ -152,7 +151,7 @@
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Produk</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Harga</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Jumlah</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Total Harga</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Subtotal</th>
                   </tr>
                 </thead>
                 <tbody id="purchaseDetailsBody">
@@ -171,6 +170,8 @@
 
 <script>
   let savedPurchaseCodes = {}; // Object to store saved purchase codes
+  let reportDetails = []; // Array to store report details
+  let purchaseData = {};
 
   function fetchProductDetails() {
     const productId = document.getElementById("productSelect").value;
@@ -182,7 +183,7 @@
           document.getElementById("productUnit").value = data.satuan;
           document.getElementById("productPrice").value = data.harga;
           document.getElementById("productStock").value = data.stok;
-          calculateTotalPrice();
+          calculateSubtotal();
         })
         .catch((error) => console.error("Error:", error));
     } else {
@@ -195,14 +196,14 @@
     document.getElementById("productUnit").value = "";
     document.getElementById("productPrice").value = "";
     document.getElementById("productStock").value = "";
-    document.getElementById("totalPrice").value = "";
+    document.getElementById("subtotal").value = "";
   }
 
-  function calculateTotalPrice() {
+  function calculateSubtotal() {
     const price = parseFloat(document.getElementById("productPrice").value) || 0;
     const quantity = parseFloat(document.getElementById("productStock").value) || 0;
     const total = price * quantity;
-    document.getElementById("totalPrice").value = total;
+    document.getElementById("subtotal").value = total;
   }
 
   function fetchSupplierDetails() {
@@ -244,49 +245,47 @@
 
   function savePurchaseDetails(supplierData, supplierId, purchaseCode) {
     const productName = document.getElementById("productSelect").options[document.getElementById("productSelect").selectedIndex].text;
-    const productPrice = document.getElementById("productPrice").value;
-    const productStock = document.getElementById("productStock").value;
-    const totalPrice = document.getElementById("totalPrice").value;
+    const productPrice = parseFloat(document.getElementById("productPrice").value);
+    const productStock = parseInt(document.getElementById("productStock").value);
+    const subtotal = parseFloat(document.getElementById("subtotal").value);
+    const purchaseDate = new Date().toISOString().split("T")[0];
+
+    if (!purchaseData[purchaseCode]) {
+      purchaseData[purchaseCode] = {
+        supplier: supplierData.nama,
+        tanggal_pembelian: purchaseDate,
+        items: [],
+      };
+    }
+
+    purchaseData[purchaseCode].items.push({
+      produk: productName,
+      harga: productPrice,
+      jumlah: productStock,
+      total_harga: subtotal,
+    });
 
     const purchaseDetailsTable = document.getElementById("purchaseDetailsTable");
     const tbody = purchaseDetailsTable.querySelector("tbody");
 
-    // Generate a unique identifier for each supplier transaction
-    const uniquePurchaseCode = `${purchaseCode}-${supplierId}`;
-
-    // Find an existing row with the same unique identifier
-    let existingRow = Array.from(tbody.rows).find((row) => row.dataset.purchaseCode === uniquePurchaseCode);
-
-    if (!existingRow) {
-      // If no existing row is found, create a new one with the unique identifier
-      existingRow = document.createElement("tr");
-      existingRow.dataset.purchaseCode = uniquePurchaseCode;
-      existingRow.innerHTML = `
-        <td>${purchaseCode}</td>
-        <td>${supplierData.nama}</td>
-        <td>${productName}</td>
-        <td>Rp ${productPrice}</td>
-        <td>${productStock}</td>
-        <td>Rp ${totalPrice}</td>
-      `;
-      tbody.appendChild(existingRow);
-    } else {
-      // If an existing row is found, append a new row with empty cells for purchase code and supplier name
-      const newRow = document.createElement("tr");
-      newRow.dataset.purchaseCode = uniquePurchaseCode;
-      newRow.innerHTML = `
-        <td></td>
-        <td></td>
-        <td>${productName}</td>
-        <td>Rp ${productPrice}</td>
-        <td>${productStock}</td>
-        <td>Rp ${totalPrice}</td>
-      `;
-      tbody.appendChild(newRow);
-    }
+    const newRow = document.createElement("tr");
+    newRow.innerHTML = `
+      <td>${purchaseCode}</td>
+      <td>${supplierData.nama}</td>
+      <td>${productName}</td>
+      <td>Rp ${productPrice}</td>
+      <td>${productStock}</td>
+      <td>Rp ${subtotal}</td>
+    `;
+    tbody.appendChild(newRow);
 
     resetForm();
   }
+
+  document.getElementById("purchaseForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    submitReport();
+  });
 
   function resetForm() {
     // Reset the product details
@@ -313,6 +312,34 @@
       result += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     return result;
+  }
+
+  function submitReport() {
+    const pembelian = Object.keys(purchaseData).map((purchaseCode) => ({
+      kode_pembelian: purchaseCode,
+      supplier: purchaseData[purchaseCode].supplier,
+      tanggal_pembelian: purchaseData[purchaseCode].tanggal_pembelian,
+      items: purchaseData[purchaseCode].items,
+    }));
+
+    fetch('{{ url_for("addPembelian") }}', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pembelian }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          alert("Report submitted successfully!");
+          document.getElementById("purchaseDetailsBody").innerHTML = "";
+          purchaseData = {};
+        } else {
+          alert("Error submitting report: " + data.error);
+        }
+      })
+      .catch((error) => console.error("Error:", error));
   }
 </script>
 {% include 'admin/templates/footer.html' %}
