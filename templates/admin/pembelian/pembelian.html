@@ -20,7 +20,7 @@
               <div class="col-lg-3">
                 <h6>Data Supplier</h6>
                 <div class="avatar avatar-xl position-relative">
-                  <img id="supplierImage" src="../static/assets/img/default.jpg" alt="Supplier Image" class="w-100 border-radius-lg shadow-sm" height="75" />
+                  <img id="supplierImage" src="../static/images/imgsupplier.png" alt="Supplier Image" class="w-100 border-radius-lg shadow-sm" height="75" />
                 </div>
               </div>
               <div class="col-lg-9 col-7">
@@ -70,7 +70,7 @@
               <div class="col-lg-3">
                 <h6>Data Produk</h6>
                 <div class="avatar avatar-xl position-relative">
-                  <img id="productImage" src="../static/assets/img/default.jpg" alt="Product Image" class="w-100 border-radius-lg shadow-sm" height="75" />
+                  <img id="productImage" src="../static/images/imgproduct.png" alt="Product Image" class="w-100 border-radius-lg shadow-sm" height="75" />
                 </div>
               </div>
               <div class="col-lg-9 col-7">
@@ -146,12 +146,10 @@
               <table id="purchaseDetailsTable" class="table align-items-center text-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Kode Pembelian</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Supplier</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Produk</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Harga</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Jumlah</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ps-2">Subtotal</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Produk</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Harga</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Jumlah</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Subtotal</th>
                   </tr>
                 </thead>
                 <tbody id="purchaseDetailsBody">
@@ -192,7 +190,7 @@
   }
 
   function resetProductDetails() {
-    document.getElementById("productImage").src = "../static/assets/img/default.jpg";
+    document.getElementById("productImage").src = "../static/images/imgproduct.png";
     document.getElementById("productUnit").value = "";
     document.getElementById("productPrice").value = "";
     document.getElementById("productStock").value = "";
@@ -228,7 +226,7 @@
 
   function resetSupplierDetails() {
     document.getElementById("supplierAlamat").value = "";
-    document.getElementById("supplierImage").src = "../static/assets/img/default.jpg";
+    document.getElementById("supplierImage").src = "../static/images/imgsupplier.png";
     document.getElementById("supplierNo").value = "";
   }
 
@@ -271,8 +269,6 @@
 
     const newRow = document.createElement("tr");
     newRow.innerHTML = `
-        <td>${purchaseCode}</td>
-        <td>${purchaseData[purchaseCode].supplier}</td>
         <td>${productName}</td>
         <td>Rp ${productPrice}</td>
         <td>${productStock}</td>

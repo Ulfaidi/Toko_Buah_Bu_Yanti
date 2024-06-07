@@ -204,14 +204,10 @@ def detail():
     return render_template('page/detail.html')
 
 @app.route('/about')
-@login_required
-@role_required('user')
 def about():
     return render_template('page/about.html')
 
 @app.route('/contact')
-@login_required
-@role_required('user')
 def contact():
     return render_template('page/kontak.html')
 
