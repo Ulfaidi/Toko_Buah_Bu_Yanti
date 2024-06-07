@@ -1,0 +1,73 @@
+{% include 'admin/templates/header.html' %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-custom shadow-success border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Edit Stock</h6>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <div class="container mt-5">
+              <form method="POST" action="{{ url_for('editStock', _id=product['_id']) }}" enctype="multipart/form-data">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <td><label for="nama_barang">Nama Barang:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <label class="form-label"></label>
+                          <input type="text" class="form-control" id="nama_barang" name="nama_barang" value="{{ product['nama'] }}" readonly />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="gambar">Gambar:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <img src="{{ url_for('static', filename='assets/imgProducts/' ~ product['gambar']) }}" alt="{{ product['nama'] }}" class="img-thumbnail" width="100" />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="stok">Jumlah:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <label class="form-label"></label>
+                          <input type="number" class="form-control" id="stok" name="stok" value="{{ product['stok'] }}" readonly />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="pengurangan">Pengurangan Stok:</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <label class="form-label"></label>
+                          <input type="number" class="form-control" id="pengurangan" name="pengurangan" placeholder="Jumlah pengurangan stok" required />
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><label for="keterangan">Keterangan (Opsional):</label></td>
+                      <td>
+                        <div class="input-group input-group-outline">
+                          <label class="form-label"></label>
+                          <textarea class="form-control" id="keterangan" name="keterangan" rows="3"></textarea>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a href="{{ url_for('stock') }}" class="btn btn-secondary">Kembali</a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% include 'admin/templates/footer.html' %}
