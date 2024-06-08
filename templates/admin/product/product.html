@@ -55,9 +55,9 @@
                     <span class="text-secondary text-xs font-weight-bold">{{ product.deskripsi }}</span>
                   </td>
                   <td class="align-middle text-center">
-                    <a class="btn btn-link text-danger text-gradient px-3 mb-0" href="/deleteProduct/{{ product._id }}"><i class="material-icons text-sm me-2">delete</i>Delete</a>
+                    <a class="btn btn-link text-danger text-gradient px-3 mb-0" href="javascript:void(0);" onclick="konfirmasiHapus('{{ product._id }}')"><i class="material-icons text-sm me-2">delete</i>Hapus</a>
                     <a class="btn btn-link text-dark px-3 mb-0" href="/editProduct/{{ product._id }}"><i class="material-icons text-sm me-2">edit</i>Edit</a>
-                  </td>
+                  </td>                  
                 </tr>
                 {% endfor %}
               </tbody>
@@ -69,3 +69,21 @@
   </div>
 </div>
 {% include 'admin/templates/footer.html' %}
+
+<script>
+  function konfirmasiHapus(productId) {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: "Anda tidak akan bisa mengembalikannya!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, hapus!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = '/deleteProduct/' + productId;
+      }
+    });
+  }
+</script>

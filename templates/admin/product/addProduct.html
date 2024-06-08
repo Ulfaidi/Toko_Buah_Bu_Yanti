@@ -19,7 +19,7 @@
                 </button>
               </div>
               {% endif %}
-              <form method="POST" action="{{ url_for('addProduct') }}" enctype="multipart/form-data">
+              <form id="addProductForm" method="POST" action="{{ url_for('addProduct') }}" enctype="multipart/form-data">
                 <table class="table">
                   <tbody>
                     <tr>
@@ -84,3 +84,32 @@
   </div>
 </div>
 {% include 'admin/templates/footer.html' %}
+<script>
+  document.getElementById('addProductForm').addEventListener('submit', function(event) {
+    event.preventDefault(); 
+    var form = this;
+
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: "Anda akan menyimpan produk baru!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, simpan!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Berhasil!',
+          text: 'Produk berhasil ditambahkan.',
+          icon: 'success',
+          timer: 2000,
+          timerProgressBar: true,
+          willClose: () => {
+            form.submit(); 
+          }
+        });
+      }
+    });
+  });
+</script>

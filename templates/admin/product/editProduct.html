@@ -19,7 +19,7 @@
                 </button>
               </div>
               {% endif %}
-              <form method="POST" action="/editProduct/{{ data[0]._id }}" enctype="multipart/form-data">
+              <form id="editProductForm" method="POST" action="/editProduct/{{ data[0]._id }}" enctype="multipart/form-data">
                 <input type="hidden" class="form-control" name="_id" value="{{ data[0]._id }}" />
                 <table class="table">
                   <tbody>
@@ -94,4 +94,23 @@
     };
     reader.readAsDataURL(event.target.files[0]);
   }
+
+  document.getElementById('editProductForm').addEventListener('submit', function(event) {
+    event.preventDefault(); 
+    var form = this;
+
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: "Anda akan menyimpan perubahan produk!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, simpan!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit(); 
+      }
+    });
+  });
 </script>
