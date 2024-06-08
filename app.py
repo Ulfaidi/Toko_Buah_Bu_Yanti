@@ -497,21 +497,18 @@ def addPembelian():
         pembelian = data.get('pembelian', [])
 
         for pembelian_item in pembelian:
-            # Convert the date string to datetime object and then format it
             pembelian_item['tanggal_pembelian'] = datetime.strptime(pembelian_item['tanggal_pembelian'], '%Y-%m-%d').strftime('%d-%m-%Y')
             for item in pembelian_item['items']:
                 item['harga'] = int(item['harga'])
                 item['jumlah'] = int(item['jumlah'])
                 item['total_harga'] = int(item['total_harga'])
 
-                # Ensure 'satuan' is included in the item
                 if 'satuan' not in item:
                     product_id = item['_id']
                     product = db.products.find_one({"_id": ObjectId(product_id)})
                     if product:
                         item['satuan'] = product.get('satuan', 'undefined')
 
-                # Update the stock in the product collection
                 product_id = item['_id']
                 product = db.products.find_one({"_id": ObjectId(product_id)})
                 if product:
@@ -522,6 +519,53 @@ def addPembelian():
                     )
 
         db.purchases.insert_many(pembelian)
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# penjualan ###############################################################################################
+# Halaman penjualan ###############################################################################################
+@app.route('/penjualan')
+@login_required
+@role_required('admin')
+def penjualan():
+
+    products = list(db.products.find())
+
+    purchase_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    current_date = datetime.now().strftime("%d-%m-%Y")
+
+    return render_template('admin/penjualan/penjualan.html', products=products, current_route=request.path, purchase_code=purchase_code, current_date=current_date)
+    
+@app.route('/addPenjualan', methods=['POST'])
+def addPenjualan():
+    try:
+        data = request.json
+        penjualan = data.get('penjualan', [])
+
+        for penjualan_item in penjualan:
+            penjualan_item['tanggal_penjualan'] = datetime.strptime(penjualan_item['tanggal_penjualan'], '%Y-%m-%d').strftime('%d-%m-%Y')
+            for item in penjualan_item['items']:
+                item['harga'] = int(item['harga'])
+                item['jumlah'] = int(item['jumlah'])
+                item['total_harga'] = int(item['total_harga'])
+
+                if 'satuan' not in item:
+                    product_id = item['_id']
+                    product = db.products.find_one({"_id": ObjectId(product_id)})
+                    if product:
+                        item['satuan'] = product.get('satuan', 'undefined')
+
+                product_id = item['_id']
+                product = db.products.find_one({"_id": ObjectId(product_id)})
+                if product:
+                    new_stock = product['stok'] - item['jumlah']
+                    db.products.update_one(
+                        {"_id": ObjectId(product_id)},
+                        {"$set": {"stok": new_stock}}
+                    )
+
+        db.purchases.insert_many(penjualan)
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
