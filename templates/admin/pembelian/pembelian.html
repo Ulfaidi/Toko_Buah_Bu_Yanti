@@ -153,7 +153,7 @@
                   </tr>
                 </thead>
                 <tbody id="purchaseDetailsBody">
-                  <!-- Example row, you can add more rows dynamically as needed -->
+                  <!-- Tambah isi Tabel Detail Pembelian -->
                 </tbody>
                 <tfoot>
                   <tr>
@@ -256,10 +256,10 @@
     const purchaseCode = document.getElementById("purchaseCode").textContent;
     const productSelect = document.getElementById("productSelect");
     const productName = productSelect.options[productSelect.selectedIndex].text;
-    const productId = productSelect.value; // Get the selected product ID
+    const productId = productSelect.value; 
     const productPrice = parseFloat(document.getElementById("productPrice").value);
     const productStock = parseInt(document.getElementById("productStock").value);
-    const productUnit = document.getElementById("productUnit").value; // Get the product unit
+    const productUnit = document.getElementById("productUnit").value; 
     const subtotal = parseFloat(document.getElementById("subtotal").value);
     const purchaseDate = new Date().toISOString().split("T")[0];
 
@@ -274,7 +274,7 @@
     purchaseData[purchaseCode].items.push({
       _id: productId,
       produk: productName,
-      satuan: productUnit, // Store the product unit
+      satuan: productUnit, 
       harga: productPrice,
       jumlah: productStock,
       total_harga: subtotal,
