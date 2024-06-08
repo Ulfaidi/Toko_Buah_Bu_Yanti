@@ -19,7 +19,7 @@
                 </button>
               </div>
               {% endif %}
-              <form method="POST" action="{{ url_for('editUser', _id=user._id) }}" enctype="multipart/form-data">
+              <form method="POST" action="{{ url_for('editUser', _id=user._id) }}" enctype="multipart/form-data" oninput="checkChanges()" id="editForm">
                 <table class="table">
                   <tbody>
                     <tr>
@@ -54,7 +54,7 @@
                     </tr>
                   </tbody>
                 </table>
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="submit" id="updateButton" class="btn btn-primary" disabled>Update</button>
                 <a href="{{ url_for('user') }}" class="btn btn-secondary">Kembali</a>
               </form>
             </div>
@@ -65,3 +65,38 @@
   </div>
 </div>
 {% include 'admin/templates/footer.html' %}
+
+<script>
+  const originalValues = {
+    username: "{{ user.username }}",
+    role: "{{ user.role }}"
+  };
+
+  function checkChanges() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
+
+    const hasChanges = username !== originalValues.username || password !== '' || role !== originalValues.role;
+
+    document.getElementById('updateButton').disabled = !hasChanges;
+  }
+
+  checkChanges();
+
+  document.getElementById('editForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    Swal.fire({
+      title: "Sukses!",
+      text: "Perubahan telah berhasil disimpan!",
+      icon: "success",
+      confirmButtonText: "OK"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.submit();
+      }
+    });
+  });
+</script>
+

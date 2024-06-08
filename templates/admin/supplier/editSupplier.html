@@ -19,7 +19,7 @@
                 </button>
               </div>
               {% endif %}
-              <form method="POST" action="/editSupplier/{{ data[0]._id }}" enctype="multipart/form-data">
+              <form id="editSupplierForm" method="POST" action="/editSupplier/{{ data[0]._id }}" enctype="multipart/form-data">
                 <input type="hidden" class="form-control" name="_id" value="{{ data[0]._id }}" />
                 <table class="table">
                   <tbody>
@@ -62,7 +62,7 @@
                     </tr>
                   </tbody>
                 </table>
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-primary" onclick="confirmSave()">Simpan</button>
                 <a href="{{ url_for('supplier') }}" class="btn btn-secondary">Kembali</a>
               </form>
             </div>
@@ -73,6 +73,7 @@
   </div>
 </div>
 {% include 'admin/templates/footer.html' %}
+
 <script>
   function previewImage(event) {
     var reader = new FileReader();
@@ -81,5 +82,22 @@
       output.src = reader.result;
     };
     reader.readAsDataURL(event.target.files[0]);
+  }
+
+  function confirmSave() {
+    Swal.fire({
+      title: "Apakah Anda yakin?",
+      text: "Perubahan yang Anda buat akan disimpan.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, simpan!",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById("editSupplierForm").submit();
+      }
+    });
   }
 </script>

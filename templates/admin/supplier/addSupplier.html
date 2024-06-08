@@ -19,7 +19,7 @@
                 </button>
               </div>
               {% endif %}
-              <form method="POST" action="{{ url_for('addSupplier') }}" enctype="multipart/form-data">
+              <form id="addSupplierForm" method="POST" action="{{ url_for('addSupplier') }}" enctype="multipart/form-data">
                 <table class="table">
                   <tbody>
                     <tr>
@@ -62,7 +62,7 @@
                     
                   </tbody>
                 </table>
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-primary" onclick="confirmSave()">Simpan</button>
                 <a href="{{ url_for('supplier') }}" class="btn btn-secondary">Kembali</a>
               </form>
             </div>
@@ -73,3 +73,22 @@
   </div>
 </div>
 {% include 'admin/templates/footer.html' %}
+
+<script>
+  function confirmSave() {
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: "Data supplier akan disimpan.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, simpan!',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById('addSupplierForm').submit();
+      }
+    });
+  }
+</script>

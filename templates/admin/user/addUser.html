@@ -19,7 +19,7 @@
                 </button>
               </div>
               {% endif %}
-              <form method="POST" action="{{ url_for('addUser') }}" enctype="multipart/form-data">
+              <form method="POST" action="{{ url_for('addUser') }}" enctype="multipart/form-data" onsubmit="return showAlert(event)">
                 <table class="table">
                   <tbody>
                     <tr>
@@ -66,3 +66,24 @@
   </div>
 </div>
 {% include 'admin/templates/footer.html' %}
+
+<script>
+  function showAlert(event) {
+    event.preventDefault(); // Prevent the form from submitting
+    const form = event.target;
+    Swal.fire({
+      title: "Apakah Anda yakin?",
+      text: "Data pengguna akan disimpan!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, simpan!",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit(); // Submit the form if the user confirms
+      }
+    });
+  }
+</script>
