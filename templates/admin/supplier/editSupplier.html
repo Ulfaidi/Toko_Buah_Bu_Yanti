@@ -62,7 +62,7 @@
                     </tr>
                   </tbody>
                 </table>
-                <button type="button" class="btn btn-primary" onclick="confirmSave()">Simpan</button>
+                <button type="button" class="btn btn-primary" id="simpanButton" onclick="confirmSave()" disabled>Simpan</button>
                 <a href="{{ url_for('supplier') }}" class="btn btn-secondary">Kembali</a>
               </form>
             </div>
@@ -75,14 +75,29 @@
 {% include 'admin/templates/footer.html' %}
 
 <script>
-  function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function () {
-      var output = document.getElementById("gambar-preview");
-      output.src = reader.result;
+  var originalValues = {
+    nama: document.getElementById("nama").value,
+    alamat: document.getElementById("alamat").value,
+    noTelp: document.getElementById("noTelp").value,
+  };
+
+  function checkChanges() {
+    var currentValues = {
+      nama: document.getElementById("nama").value,
+      alamat: document.getElementById("alamat").value,
+      noTelp: document.getElementById("noTelp").value,
     };
-    reader.readAsDataURL(event.target.files[0]);
+
+    var hasChanges = Object.keys(currentValues).some(function (key) {
+      return currentValues[key] !== originalValues[key];
+    });
+
+    document.getElementById("simpanButton").disabled = !hasChanges;
   }
+
+  document.getElementById("nama").addEventListener("input", checkChanges);
+  document.getElementById("alamat").addEventListener("input", checkChanges);
+  document.getElementById("noTelp").addEventListener("input", checkChanges);
 
   function confirmSave() {
     Swal.fire({

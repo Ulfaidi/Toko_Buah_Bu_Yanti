@@ -74,7 +74,7 @@
                     </tr>
                   </tbody>
                 </table>
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Simpan</button>
                 <a href="{{ url_for('product') }}" class="btn btn-secondary">Kembali</a>
               </form>
             </div>
@@ -86,14 +86,32 @@
 </div>
 {% include 'admin/templates/footer.html' %}
 <script>
-  function previewImage(event) {
-    var reader = new FileReader();
-    reader.onload = function () {
-      var output = document.getElementById("gambar-preview");
-      output.src = reader.result;
+  var originalValues = {
+    nama: document.getElementById("nama").value,
+    satuan: document.getElementById("satuan").value,
+    harga: document.getElementById("harga").value,
+    deskripsi: document.getElementById("deskripsi").value
+  };
+
+  function checkChanges() {
+    var currentValues = {
+      nama: document.getElementById("nama").value,
+      satuan: document.getElementById("satuan").value,
+      harga: document.getElementById("harga").value,
+      deskripsi: document.getElementById("deskripsi").value
     };
-    reader.readAsDataURL(event.target.files[0]);
+
+    var hasChanges = Object.keys(currentValues).some(function(key) {
+      return currentValues[key] !== originalValues[key];
+    });
+
+    document.getElementById("submitBtn").disabled = !hasChanges;
   }
+
+  document.getElementById("nama").addEventListener("input", checkChanges);
+  document.getElementById("satuan").addEventListener("change", checkChanges);
+  document.getElementById("harga").addEventListener("input", checkChanges);
+  document.getElementById("deskripsi").addEventListener("input", checkChanges);
 
   document.getElementById('editProductForm').addEventListener('submit', function(event) {
     event.preventDefault(); 
@@ -114,3 +132,4 @@
     });
   });
 </script>
+

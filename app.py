@@ -185,7 +185,7 @@ def register():
 @app.route('/logoutAdmin')
 def logout():
     session.clear()
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('loginAdmin'))
 
 @app.route('/')
 def home():
