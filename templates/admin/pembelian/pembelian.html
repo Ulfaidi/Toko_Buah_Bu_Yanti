@@ -186,7 +186,6 @@
           document.getElementById("productImage").src = `../static/assets/imgProducts/${data.gambar}`;
           document.getElementById("productUnit").value = data.satuan;
           calculateSubtotal();
-          document.getElementById("saveSupplierDetails").disabled = false;
         })
         .catch((error) => console.error("Error:", error));
     } else {
@@ -256,10 +255,10 @@
     const purchaseCode = document.getElementById("purchaseCode").textContent;
     const productSelect = document.getElementById("productSelect");
     const productName = productSelect.options[productSelect.selectedIndex].text;
-    const productId = productSelect.value; 
+    const productId = productSelect.value;
     const productPrice = parseFloat(document.getElementById("productPrice").value);
     const productStock = parseInt(document.getElementById("productStock").value);
-    const productUnit = document.getElementById("productUnit").value; 
+    const productUnit = document.getElementById("productUnit").value;
     const subtotal = parseFloat(document.getElementById("subtotal").value);
     const purchaseDate = new Date().toISOString().split("T")[0];
 
@@ -274,7 +273,7 @@
     purchaseData[purchaseCode].items.push({
       _id: productId,
       produk: productName,
-      satuan: productUnit, 
+      satuan: productUnit,
       harga: productPrice,
       jumlah: productStock,
       total_harga: subtotal,
@@ -361,16 +360,47 @@
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          alert("Report submitted successfully!");
-          generateInvoice();
-          document.getElementById("purchaseDetailsBody").innerHTML = "";
-          purchaseData = {};
-          resetForm();
+          Swal.fire({
+            title: "Berhasil!",
+            text: "Laporan berhasil disimpan!",
+            icon: "success",
+            confirmButtonText: "OK",
+          }).then(() => {
+            generateInvoice();
+            document.getElementById("purchaseDetailsBody").innerHTML = "";
+            purchaseData = {};
+            resetForm();
+          });
         } else {
-          alert("Error submitting report: " + data.error);
+          Swal.fire({
+            title: "Error!",
+            text: "Error saat menyimpan laporan: " + data.error,
+            icon: "error",
+            confirmButtonText: "OK",
+          });
         }
       })
       .catch((error) => console.error("Error:", error));
+  }
+
+  document.getElementById("productSelect").addEventListener("input", function () {
+    document.getElementById("saveSupplierDetails").disabled = !checkInputsFilled();
+  });
+
+  document.getElementById("productPrice").addEventListener("input", function () {
+    document.getElementById("saveSupplierDetails").disabled = !checkInputsFilled();
+  });
+
+  document.getElementById("productStock").addEventListener("input", function () {
+    document.getElementById("saveSupplierDetails").disabled = !checkInputsFilled();
+  });
+
+  function checkInputsFilled() {
+    const productSelect = document.getElementById("productSelect").value;
+    const productPrice = document.getElementById("productPrice").value;
+    const productStock = document.getElementById("productStock").value;
+
+    return productSelect !== "" && productPrice !== "" && productStock !== "";
   }
 
   function generateInvoice() {
@@ -481,5 +511,5 @@
     invoiceWindow.print();
   }
 </script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 {% include 'admin/templates/footer.html' %}
