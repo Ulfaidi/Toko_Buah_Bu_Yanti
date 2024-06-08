@@ -155,12 +155,18 @@
                 <tbody id="purchaseDetailsBody">
                   <!-- Example row, you can add more rows dynamically as needed -->
                 </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                    <td id="totalValue">Rp 0</td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>
         </div>
-        <a id="resetButton" class="btn btn-secondary mt-2">Kosong</a>
         <button type="submit" class="btn btn-primary mt-2">Simpan</button>
+        <a id="resetButton" class="btn btn-secondary mt-2">Kosong</a>
       </div>
     </div>
   </form>
@@ -231,10 +237,18 @@
   }
 
   function resetProductForm() {
-    // Reset product details only
     resetProductDetails();
-    // Reset the product select
     document.getElementById("productSelect").value = "";
+  }
+
+  function calculateTotal() {
+    const tbody = document.getElementById("purchaseDetailsBody");
+    let total = 0;
+    tbody.querySelectorAll("tr").forEach((row) => {
+      const subtotal = parseFloat(row.querySelector("td:nth-child(6)").textContent.replace("Rp", "").trim());
+      total += subtotal;
+    });
+    document.getElementById("totalValue").textContent = `Rp ${total}`;
   }
 
   function savePurchaseDetails() {
@@ -245,6 +259,7 @@
     const productId = productSelect.value; // Get the selected product ID
     const productPrice = parseFloat(document.getElementById("productPrice").value);
     const productStock = parseInt(document.getElementById("productStock").value);
+    const productUnit = document.getElementById("productUnit").value; // Get the product unit
     const subtotal = parseFloat(document.getElementById("subtotal").value);
     const purchaseDate = new Date().toISOString().split("T")[0];
 
@@ -259,6 +274,7 @@
     purchaseData[purchaseCode].items.push({
       _id: productId,
       produk: productName,
+      satuan: productUnit, // Store the product unit
       harga: productPrice,
       jumlah: productStock,
       total_harga: subtotal,
@@ -275,6 +291,8 @@
         <td>Rp ${subtotal}</td>
     `;
     tbody.appendChild(newRow);
+
+    calculateTotal();
 
     resetProductForm();
   }
@@ -296,7 +314,7 @@
     resetProductDetails();
 
     resetSupplierDetails();
-
+    document.getElementById("totalValue").textContent = "Rp 0";
     document.getElementById("productSelect").value = "";
     document.getElementById("supplierSelect").value = "";
 
@@ -316,7 +334,15 @@
     }
     return result;
   }
-
+  function calculateTotal() {
+    const tbody = document.getElementById("purchaseDetailsBody");
+    let total = 0;
+    tbody.querySelectorAll("tr").forEach((row) => {
+      const subtotal = parseFloat(row.querySelector("td:nth-child(4)").textContent.replace("Rp", "").trim());
+      total += subtotal;
+    });
+    document.getElementById("totalValue").textContent = `Rp ${total}`;
+  }
   function submitReport() {
     const pembelian = Object.keys(purchaseData).map((purchaseCode) => ({
       kode_pembelian: purchaseCode,
@@ -336,6 +362,7 @@
       .then((data) => {
         if (data.success) {
           alert("Report submitted successfully!");
+          generateInvoice();
           document.getElementById("purchaseDetailsBody").innerHTML = "";
           purchaseData = {};
           resetForm();
@@ -344,6 +371,114 @@
         }
       })
       .catch((error) => console.error("Error:", error));
+  }
+
+  function generateInvoice() {
+    const selectedSupplierId = document.getElementById("supplierSelect").value;
+    const selectedSupplierName = document.getElementById("supplierSelect").options[document.getElementById("supplierSelect").selectedIndex].text;
+    const invoiceWindow = window.open("", "Invoice", "height=600,width=800");
+    let invoiceContent = `
+    <html>
+        <head>
+            <title>Purchase Invoice</title>
+            <style>
+                body { font-family: Arial, sans-serif; }
+                .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); font-size: 16px; line-height: 24px; color: #555; }
+                .invoice-box table { width: 100%; line-height: inherit; text-align: left; border-collapse: collapse; }
+                .invoice-box table td { padding: 5px; vertical-align: top; }
+                .invoice-box table tr td:nth-child(2) { text-align: right; }
+                .invoice-box table tr.top table td { padding-bottom: 20px; }
+                .invoice-box table tr.top table td.title { font-size: 45px; line-height: 45px; color: #333; }
+                .invoice-box table tr.information table td { padding-bottom: 10px; } /* Adjust padding here */
+                .invoice-box table tr.heading td { background: #eee; border-bottom: 1px solid #ddd; font-weight: bold; }
+                .invoice-box table tr.details td { padding-bottom: 20px; }
+                .invoice-box table tr.item td { border-bottom: 1px solid #eee; }
+                .invoice-box table tr.item.last td { border-bottom: none; }
+                .invoice-box table tr.total td:nth-child(2) { border-top: 2px solid #eee; font-weight: bold; }
+                .invoice-box .center { text-align: center; }
+                .invoice-box .right { text-align: right; }
+                .invoice-box .left { text-align: left; }
+                .invoice-box .equal-width td { width: 50%; }
+            </style>
+        </head>
+        <body>
+            <div class="invoice-box">
+                <table cellpadding="0" cellspacing="0">
+                    <tr class="top">
+                        <td colspan="3">
+                            <table>
+                                <tr>
+                                    <td class="left">
+                                        ${selectedSupplierName}<br>
+                                        Jl.riau no.7 Jember - 12345676
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="information">
+                        <td colspan="3">
+                            <table class="equal-width">
+                                <tr>
+                                    <td class="left">
+                                        Kode Pembelian
+                                    </td>
+                                    <td class="left">
+                                        :
+                                    </td>
+                                    <td class="left">
+                                        ${Object.keys(purchaseData)[0]}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="left">
+                                        Tanggal Pembelian
+                                    </td>
+                                    <td class="left">
+                                        :
+                                    </td>
+                                    <td class="left">
+                                        {{ current_date }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="heading">
+                        <td>Nama Produk</td>
+                        <td class="right">Jumlah</td>
+                        <td class="right">Satuan</td>
+                        <td class="right">Harga Beli</td>
+                        <td class="right">Subtotal</td>
+                    </tr>`;
+
+    Object.keys(purchaseData).forEach((purchaseCode) => {
+      purchaseData[purchaseCode].items.forEach((item) => {
+        invoiceContent += `
+            <tr class="item">
+                <td>${item.produk}</td>
+                <td class="right">${item.jumlah}</td>
+                <td class="right">${item.satuan}</td>
+                <td class="right">Rp. ${item.harga}</td>
+                <td class="right">Rp. ${item.total_harga}</td>
+            </tr>`;
+      });
+    });
+
+    const total = Object.keys(purchaseData).reduce((sum, code) => sum + purchaseData[code].items.reduce((subSum, item) => subSum + item.total_harga, 0), 0);
+
+    invoiceContent += `
+                    <tr class="total">
+                        <td class="right" colspan="5">Total: Rp. ${total}</td>
+                    </tr>
+                </table>
+            </div>
+        </body>
+    </html>`;
+
+    invoiceWindow.document.write(invoiceContent);
+    invoiceWindow.document.close();
+    invoiceWindow.print();
   }
 </script>
 

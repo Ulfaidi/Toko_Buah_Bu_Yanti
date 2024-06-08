@@ -504,8 +504,15 @@ def addPembelian():
                 item['jumlah'] = int(item['jumlah'])
                 item['total_harga'] = int(item['total_harga'])
 
+                # Ensure 'satuan' is included in the item
+                if 'satuan' not in item:
+                    product_id = item['_id']
+                    product = db.products.find_one({"_id": ObjectId(product_id)})
+                    if product:
+                        item['satuan'] = product.get('satuan', 'undefined')
+
                 # Update the stock in the product collection
-                product_id = item['_id']  # Assuming product_id is included in the items
+                product_id = item['_id']
                 product = db.products.find_one({"_id": ObjectId(product_id)})
                 if product:
                     new_stock = product['stok'] + item['jumlah']
