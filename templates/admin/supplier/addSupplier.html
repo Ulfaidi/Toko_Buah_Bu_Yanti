@@ -27,7 +27,7 @@
                       <td>
                         <div class="input-group input-group-outline">
                           <label class="form-label"></label>
-                          <input type="text" class="form-control" id="nama" name="nama" required/>
+                          <input type="text" class="form-control" id="nama" name="nama" required />
                         </div>
                       </td>
                     </tr>
@@ -36,7 +36,7 @@
                       <td>
                         <div class="input-group input-group-outline">
                           <label class="form-label"></label>
-                          <input type="file" class="form-control" id="gambar" name="gambar" accept="image/png, image/jpeg" style="border-radius: 13px" />
+                          <input type="file" class="form-control" id="gambar" name="gambar" accept="image/png, image/jpeg" style="border-radius: 13px" required />
                         </div>
                       </td>
                     </tr>
@@ -45,7 +45,7 @@
                       <td>
                         <div class="input-group input-group-outline">
                           <label class="form-label"></label>
-                          <input type="text" class="form-control" id="alamat" name="alamat" required/>
+                          <input type="text" class="form-control" id="alamat" name="alamat" required />
                         </div>
                       </td>
                     </tr>
@@ -55,14 +55,13 @@
                       <td>
                         <div class="input-group input-group-outline">
                           <label class="form-label"></label>
-                          <input type="text" class="form-control" id="noTelp" name="noTelp" required/>
+                          <input type="text" class="form-control" id="noTelp" name="noTelp" required />
                         </div>
                       </td>
                     </tr>
-                    
                   </tbody>
                 </table>
-                <button type="button" class="btn btn-primary" onclick="confirmSave()">Simpan</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
                 <a href="{{ url_for('supplier') }}" class="btn btn-secondary">Kembali</a>
               </form>
             </div>
@@ -75,20 +74,31 @@
 {% include 'admin/templates/footer.html' %}
 
 <script>
-  function confirmSave() {
+  document.getElementById("addSupplierForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    var form = this;
+
     Swal.fire({
-      title: 'Apakah Anda yakin?',
-      text: "Data supplier akan disimpan.",
-      icon: 'warning',
+      title: "Apakah Anda yakin?",
+      text: "Anda akan menyimpan supplier baru!",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya, simpan!',
-      cancelButtonText: 'Batal'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, simpan!",
     }).then((result) => {
       if (result.isConfirmed) {
-        document.getElementById('addSupplierForm').submit();
+        Swal.fire({
+          title: "Berhasil!",
+          text: "Supplier berhasil ditambahkan.",
+          icon: "success",
+          timer: 2000,
+          timerProgressBar: true,
+          willClose: () => {
+            form.submit();
+          },
+        });
       }
     });
-  }
+  });
 </script>
