@@ -204,17 +204,14 @@
     resetProductForm();
   }
   function resetProductForm() {
-    // Reset input values
     document.getElementById("productSelect").value = "";
     document.getElementById("productUnit").value = "";
     document.getElementById("productPrice").value = "";
     document.getElementById("productStock").value = "";
     document.getElementById("subtotal").value = "";
 
-    // Reset product image
     document.getElementById("productImage").src = "../static/images/imgproduct.png";
 
-    // Disable save button
     document.getElementById("saveSalesDetails").disabled = true;
   }
 
