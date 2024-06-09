@@ -529,13 +529,11 @@ def addPembelian():
 @login_required
 @role_required('admin')
 def penjualan():
-
     products = list(db.products.find())
-
     purchase_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
     current_date = datetime.now().strftime("%d-%m-%Y")
-
     return render_template('admin/penjualan/penjualan.html', products=products, current_route=request.path, purchase_code=purchase_code, current_date=current_date)
+
     
 @app.route('/addPenjualan', methods=['POST'])
 def addPenjualan():
@@ -565,7 +563,7 @@ def addPenjualan():
                         {"$set": {"stok": new_stock}}
                     )
 
-        db.purchases.insert_many(penjualan)
+        db.sale.insert_many(penjualan)
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
