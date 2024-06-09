@@ -6,6 +6,7 @@ from datetime import datetime
 from bson.objectid import ObjectId
 import random
 import string
+import os
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
@@ -227,21 +228,15 @@ def dashboard():
 def purchases_data():
     purchases = db.purchases.find({})
 
-    # Menginisialisasi variabel untuk menyimpan data pembelian per minggu
     weekly_purchases_data = {
         "jumlah_pembeli": [0, 0, 0, 0, 0, 0, 0],
         "pendapatan": [0, 0, 0, 0, 0, 0, 0]
     }
 
-    # Menghitung jumlah pembeli dan pendapatan per hari
     for purchase in purchases:
-        # Mendapatkan tanggal pembelian
         purchase_date = datetime.strptime(purchase['tanggal_pembelian'], '%d-%m-%Y')
-        # Mendapatkan hari dalam seminggu (0 untuk Senin, 1 untuk Selasa, ..., 6 untuk Minggu)
         day_of_week = purchase_date.weekday()
-        # Menambahkan jumlah pembeli di hari tersebut
         weekly_purchases_data["jumlah_pembeli"][day_of_week] += 1
-        # Menambahkan pendapatan di hari tersebut
         weekly_purchases_data["pendapatan"][day_of_week] += sum(item['total_harga'] for item in purchase['items'])
 
     return jsonify(weekly_purchases_data=weekly_purchases_data)
@@ -278,7 +273,7 @@ def addProduct():
             if nama_gambar:
                 nama_file_asli = nama_gambar.filename
                 nama_file_gambar = nama_file_asli.split('/')[-1]
-                file_path = f'static/assets/imgProducts/{nama_file_gambar}'
+                file_path = f'static/images/imgProducts/{nama_file_gambar}'
                 nama_gambar.save(file_path)
             else:
                 nama_file_gambar = None
@@ -325,7 +320,7 @@ def editProduct(_id):
             if nama_gambar:
                 nama_file_asli = nama_gambar.filename
                 nama_file_gambar = nama_file_asli.split('/')[-1]
-                file_path = f'static/assets/imgProducts/{nama_file_gambar}'
+                file_path = f'static/images/imgProducts/{nama_file_gambar}'
                 nama_gambar.save(file_path)
                 doc['gambar'] = nama_file_gambar
 
@@ -342,6 +337,13 @@ def editProduct(_id):
 @role_required('admin')
 def deleteProduct(_id):
     _id = ObjectId(_id)
+    
+    product_info = db.products.find_one({"_id": ObjectId(_id)})
+    if product_info:
+        image_path = os.path.join(app.static_folder, 'images', 'imgProducts', product_info['gambar'])
+        if os.path.exists(image_path):
+            os.remove(image_path)
+
     db.products.delete_one({"_id": ObjectId(_id)})
     return redirect(url_for("product"))
 
@@ -374,7 +376,7 @@ def addSupplier():
             if nama_gambar:
                 nama_file_asli = nama_gambar.filename
                 nama_file_gambar = nama_file_asli.split('/')[-1]
-                file_path = f'static/assets/imgSuppliers/{nama_file_gambar}'
+                file_path = f'static/images/imgSuppliers/{nama_file_gambar}'
                 nama_gambar.save(file_path)
             else:
                 nama_file_gambar = None
@@ -416,7 +418,7 @@ def editSupplier(_id):
             if nama_gambar:
                 nama_file_asli = nama_gambar.filename
                 nama_file_gambar = nama_file_asli.split('/')[-1]
-                file_path = f'static/assets/imgSuppliers/{nama_file_gambar}'
+                file_path = f'static/images/imgSuppliers/{nama_file_gambar}'
                 nama_gambar.save(file_path)
                 doc['gambar'] = nama_file_gambar
 
@@ -431,6 +433,14 @@ def editSupplier(_id):
 @login_required
 @role_required('admin')
 def deleteSupplier(_id):
+    _id = ObjectId(_id)
+    
+    product_info = db.suppliers.find_one({"_id": ObjectId(_id)})
+    if product_info:
+        image_path = os.path.join(app.static_folder, 'images', 'imgSuppliers', product_info['gambar'])
+        if os.path.exists(image_path):
+            os.remove(image_path)
+
     _id = ObjectId(_id)
     db.suppliers.delete_one({"_id": ObjectId(_id)})
     return redirect(url_for("supplier"))
