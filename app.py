@@ -155,12 +155,12 @@ def register():
         
         if password != confirm_password:
             flash("Passwords do not match.")
-            return render_template('admin/register.html', registration_failed=True, error_message="Password Tidak Benar.")
+            return render_template('page/register.html', registration_failed=True, error_message="Password Tidak Benar.")
         
         existing_user = db.users.find_one({'username': username})
         if existing_user:
             flash("Username already exists.")
-            return render_template('admin/register.html', registration_failed=True, error_message="Username Sudah Ada.")
+            return render_template('page/register.html', registration_failed=True, error_message="Username Sudah Ada.")
         
         hashed_password = generate_password_hash(password)
         user_document = {
@@ -177,9 +177,9 @@ def register():
             return redirect(url_for('login'))
         except Exception as e:
             flash(f"An error occurred: {e}")
-            return render_template('admin/register.html', registration_failed=True, error_message=str(e))
+            return render_template('page/register.html', registration_failed=True, error_message=str(e))
     
-    return render_template('admin/register.html')
+    return render_template('page/register.html')
 
 
 # Halaman logout
