@@ -216,18 +216,10 @@ def contact():
 @login_required
 @role_required('admin')
 def dashboard():
-    # Mengambil jumlah supplier
-    num_suppliers = db.suppliers.count_documents({})
-
-    # Mengambil jumlah produk
-    num_products = db.products.count_documents({})
-
-    # Mengambil jumlah pelanggan dengan role 'user'
-    num_users = db.users.count_documents({"role": "user"})
-
-    return render_template('admin/dashboard.html', current_route=request.path,
-                           num_suppliers=num_suppliers, num_products=num_products,
-                           num_users=num_users)
+    suppliers = db.suppliers.count_documents({})
+    products = db.products.count_documents({})
+    users = db.users.count_documents({"role": "user"})
+    return render_template('admin/dashboard.html', current_route=request.path, suppliers=suppliers, products=products,users=users)
 
 
 # Produk ###############################################################################################
