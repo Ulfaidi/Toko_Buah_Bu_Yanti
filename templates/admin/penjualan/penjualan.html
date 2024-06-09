@@ -51,7 +51,7 @@
                       <td><label for="productPrice">Harga:</label></td>
                       <td>
                         <div class="input-group input-group-outline">
-                          <input type="text" class="form-control" id="productPrice" name="harga" />
+                          <input type="text" class="form-control" id="productPrice" name="harga" readonly />
                         </div>
                       </td>
                     </tr>
@@ -59,7 +59,7 @@
                       <td><label for="productStock">Jumlah:</label></td>
                       <td>
                         <div class="input-group input-group-outline">
-                          <input type="text" class="form-control" id="productStock" name="stok" oninput="calculateSubtotal()" />
+                          <input type="number" class="form-control" id="productStock" name="stok" oninput="calculateSubtotal()" />
                         </div>
                       </td>
                     </tr>
@@ -134,6 +134,7 @@
         .then((data) => {
           document.getElementById("productImage").src = `../static/assets/imgProducts/${data.gambar}`;
           document.getElementById("productUnit").value = data.satuan;
+          document.getElementById("productPrice").value = data.harga;
           calculateSubtotal();
         })
         .catch((error) => console.error("Error:", error));
