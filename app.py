@@ -221,6 +221,31 @@ def dashboard():
     users = db.users.count_documents({"role": "user"})
     return render_template('admin/dashboard.html', current_route=request.path, suppliers=suppliers, products=products,users=users)
 
+@app.route('/purchases-data')
+@login_required
+@role_required('admin')
+def purchases_data():
+    purchases = db.purchases.find({})
+
+    # Menginisialisasi variabel untuk menyimpan data pembelian per minggu
+    weekly_purchases_data = {
+        "jumlah_pembeli": [0, 0, 0, 0, 0, 0, 0],
+        "pendapatan": [0, 0, 0, 0, 0, 0, 0]
+    }
+
+    # Menghitung jumlah pembeli dan pendapatan per hari
+    for purchase in purchases:
+        # Mendapatkan tanggal pembelian
+        purchase_date = datetime.strptime(purchase['tanggal_pembelian'], '%d-%m-%Y')
+        # Mendapatkan hari dalam seminggu (0 untuk Senin, 1 untuk Selasa, ..., 6 untuk Minggu)
+        day_of_week = purchase_date.weekday()
+        # Menambahkan jumlah pembeli di hari tersebut
+        weekly_purchases_data["jumlah_pembeli"][day_of_week] += 1
+        # Menambahkan pendapatan di hari tersebut
+        weekly_purchases_data["pendapatan"][day_of_week] += sum(item['total_harga'] for item in purchase['items'])
+
+    return jsonify(weekly_purchases_data=weekly_purchases_data)
+
 
 # Produk ###############################################################################################
 # Halaman Produk ###############################################################################################

@@ -51,7 +51,7 @@
                       <td><label for="productPrice">Harga:</label></td>
                       <td>
                         <div class="input-group input-group-outline">
-                          <input type="text" class="form-control" id="productPrice" name="harga" />
+                          <input type="text" class="form-control" id="productPrice" name="harga" readonly />
                         </div>
                       </td>
                     </tr>
@@ -133,6 +133,7 @@
         .then((response) => response.json())
         .then((data) => {
           document.getElementById("productImage").src = `../static/assets/imgProducts/${data.gambar}`;
+          document.getElementById("productPrice").value = data.harga;
           document.getElementById("productUnit").value = data.satuan;
           calculateSubtotal();
         })
@@ -159,7 +160,7 @@
   }
 
   function saveSalesDetails() {
-    const salesCode = document.getElementById("salesCode").textContent; // Retrieve sales code
+    const salesCode = document.getElementById("salesCode").textContent;
     const productSelect = document.getElementById("productSelect");
     const productName = productSelect.options[productSelect.selectedIndex].text;
     const productId = productSelect.value;
@@ -201,6 +202,20 @@
 
     resetProductForm();
   }
+  function resetProductForm() {
+    // Reset input values
+    document.getElementById("productSelect").value = "";
+    document.getElementById("productUnit").value = "";
+    document.getElementById("productPrice").value = "";
+    document.getElementById("productStock").value = "";
+    document.getElementById("subtotal").value = "";
+
+    // Reset product image
+    document.getElementById("productImage").src = "../static/images/imgproduct.png";
+
+    // Disable save button
+    document.getElementById("saveSalesDetails").disabled = true;
+  }
 
   document.getElementById("salesForm").addEventListener("submit", function (event) {
     event.preventDefault();
@@ -219,11 +234,7 @@
     resetProductDetails();
     document.getElementById("totalValue").textContent = "Rp 0";
     document.getElementById("productSelect").value = "";
-
-    document.getElementById("salesCode").textContent = "";
-
     salesData = {};
-
     document.getElementById("salesDetailsBody").innerHTML = "";
   }
 
@@ -290,7 +301,6 @@
   });
 
   window.addEventListener("DOMContentLoaded", function () {
-    checkTableData();
     document.getElementById("salesCode").textContent = generateSalesCode();
   });
 
@@ -321,10 +331,6 @@
     } else {
       saveButton.disabled = true;
     }
-  }
-
-  function saveSalesDetails() {
-    checkTableData();
   }
 
   function generateInvoice() {
