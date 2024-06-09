@@ -115,7 +115,7 @@
             </div>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary mt-2">Simpan</button>
+        <button type="submit" id="saveButton" class="btn btn-primary mt-2">Simpan</button>
         <a id="resetButton" class="btn btn-secondary mt-2">Kosong</a>
       </div>
     </div>
@@ -290,6 +290,7 @@
   });
 
   window.addEventListener("DOMContentLoaded", function () {
+    checkTableData();
     document.getElementById("salesCode").textContent = generateSalesCode();
   });
 
@@ -309,6 +310,21 @@
     const productStock = document.getElementById("productStock").value;
 
     return productSelect !== "" && productPrice !== "" && productStock !== "";
+  }
+
+  function checkTableData() {
+    const tableRows = document.getElementById("salesDetailsBody").querySelectorAll("tr");
+    const saveButton = document.getElementById("saveButton");
+
+    if (tableRows.length > 0) {
+      saveButton.disabled = false;
+    } else {
+      saveButton.disabled = true;
+    }
+  }
+
+  function saveSalesDetails() {
+    checkTableData();
   }
 
   function generateInvoice() {
