@@ -132,7 +132,7 @@
       fetch(`/product/${productId}`)
         .then((response) => response.json())
         .then((data) => {
-          document.getElementById("productImage").src = `../static/assets/imgProducts/${data.gambar}`;
+          document.getElementById("productImage").src = `../static/images/imgProducts/${data.gambar}`;
           document.getElementById("productPrice").value = data.harga;
           document.getElementById("productUnit").value = data.satuan;
           document.getElementById("productPrice").value = data.harga;

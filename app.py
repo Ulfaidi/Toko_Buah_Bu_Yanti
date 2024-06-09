@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for, session, f
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
-from datetime import datetime
+from datetime import datetime, timedelta
 from bson.objectid import ObjectId
 import random
 import string
@@ -221,25 +221,6 @@ def dashboard():
     products = db.products.count_documents({})
     users = db.users.count_documents({"role": "user"})
     return render_template('admin/dashboard.html', current_route=request.path, suppliers=suppliers, products=products,users=users)
-
-@app.route('/purchases-data')
-@login_required
-@role_required('admin')
-def purchases_data():
-    purchases = db.purchases.find({})
-
-    weekly_purchases_data = {
-        "jumlah_pembeli": [0, 0, 0, 0, 0, 0, 0],
-        "pendapatan": [0, 0, 0, 0, 0, 0, 0]
-    }
-
-    for purchase in purchases:
-        purchase_date = datetime.strptime(purchase['tanggal_pembelian'], '%d-%m-%Y')
-        day_of_week = purchase_date.weekday()
-        weekly_purchases_data["jumlah_pembeli"][day_of_week] += 1
-        weekly_purchases_data["pendapatan"][day_of_week] += sum(item['total_harga'] for item in purchase['items'])
-
-    return jsonify(weekly_purchases_data=weekly_purchases_data)
 
 
 # Produk ###############################################################################################

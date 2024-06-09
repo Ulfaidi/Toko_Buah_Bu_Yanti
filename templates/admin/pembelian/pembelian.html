@@ -183,7 +183,7 @@
       fetch(`/product/${productId}`)
         .then((response) => response.json())
         .then((data) => {
-          document.getElementById("productImage").src = `../static/assets/imgProducts/${data.gambar}`;
+          document.getElementById("productImage").src = `../static/images/imgProducts/${data.gambar}`;
           document.getElementById("productUnit").value = data.satuan;
           calculateSubtotal();
         })
@@ -216,7 +216,7 @@
         .then((response) => response.json())
         .then((data) => {
           document.getElementById("supplierAlamat").value = data.alamat;
-          document.getElementById("supplierImage").src = `../static/assets/imgSuppliers/${data.gambar}`;
+          document.getElementById("supplierImage").src = `../static/images/imgSuppliers/${data.gambar}`;
           document.getElementById("supplierNo").value = data.noTelp;
 
           const purchaseCode = savedPurchaseCodes[supplierId] || generatePurchaseCode();
