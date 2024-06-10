@@ -185,9 +185,15 @@ def register():
 
 # Halaman logout
 @app.route('/logoutAdmin')
-def logout():
+def logoutAdmin():
     session.clear()
     return redirect(url_for('loginAdmin'))
+
+# Halaman logout
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/')
 def home():
