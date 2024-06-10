@@ -65,8 +65,9 @@
           <h6 class="mb-0">Penjualan</h6>
           <p class="text-sm">Seminggu Terakhir</p>
           <hr class="dark horizontal" />
-          <div class="d-flex">
-          <h6 class="mb-0">Rp 1.500.000</h6>
+          <div class="d-flex justify-content-between">
+            <h6 class="mb-0">Total Mingguan: Rp {{ weekly_total | format }}</h6>
+            <h6 class="mb-0">Total Hari Ini: Rp {{ last_day_total | format }}</h6>
           </div>
         </div>
       </div>
@@ -98,85 +99,87 @@
 {% include 'admin/templates/footer.html' %}
 
 <script>
+  var salesData = {{ sales_chart_data | tojson }};
+  var labels = {{ labels | tojson }};
+  
   var ctx = document.getElementById("chart-bars").getContext("2d");
-
   new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"],
-      datasets: [
-        {
-          label: "Sales",
-          tension: 0.4,
-          borderWidth: 0,
-          borderRadius: 4,
-          borderSkipped: false,
-          backgroundColor: "rgba(255, 255, 255, .8)",
-          data: [50, 20, 10, 22, 50, 10, 40],
-          maxBarThickness: 6,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false,
-        },
+      type: "bar",
+      data: {
+          labels: labels,
+          datasets: [
+              {
+                  label: "Pendapatan",
+                  tension: 0.4,
+                  borderWidth: 0,
+                  borderRadius: 4,
+                  borderSkipped: false,
+                  backgroundColor: "rgba(255, 255, 255, .8)",
+                  data: salesData,
+                  maxBarThickness: 6,
+              },
+          ],
       },
-      interaction: {
-        intersect: false,
-        mode: "index",
+      options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+              legend: {
+                  display: false,
+              },
+          },
+          interaction: {
+              intersect: false,
+              mode: "index",
+          },
+          scales: {
+              y: {
+                  grid: {
+                      drawBorder: false,
+                      display: true,
+                      drawOnChartArea: true,
+                      drawTicks: false,
+                      borderDash: [5, 5],
+                      color: "rgba(255, 255, 255, .2)",
+                  },
+                  ticks: {
+                      suggestedMin: 0,
+                      suggestedMax: Math.max(...salesData) + 10, // Dynamically set the max value
+                      beginAtZero: true,
+                      padding: 10,
+                      font: {
+                          size: 14,
+                          weight: 300,
+                          family: "Roboto",
+                          style: "normal",
+                          lineHeight: 2,
+                      },
+                      color: "#fff",
+                  },
+              },
+              x: {
+                  grid: {
+                      drawBorder: false,
+                      display: true,
+                      drawOnChartArea: true,
+                      drawTicks: false,
+                      borderDash: [5, 5],
+                      color: "rgba(255, 255, 255, .2)",
+                  },
+                  ticks: {
+                      display: true,
+                      color: "#f8f9fa",
+                      padding: 10,
+                      font: {
+                          size: 14,
+                          weight: 300,
+                          family: "Roboto",
+                          style: "normal",
+                          lineHeight: 2,
+                      },
+                  },
+              },
+          },
       },
-      scales: {
-        y: {
-          grid: {
-            drawBorder: false,
-            display: true,
-            drawOnChartArea: true,
-            drawTicks: false,
-            borderDash: [5, 5],
-            color: "rgba(255, 255, 255, .2)",
-          },
-          ticks: {
-            suggestedMin: 0,
-            suggestedMax: 500,
-            beginAtZero: true,
-            padding: 10,
-            font: {
-              size: 14,
-              weight: 300,
-              family: "Roboto",
-              style: "normal",
-              lineHeight: 2,
-            },
-            color: "#fff",
-          },
-        },
-        x: {
-          grid: {
-            drawBorder: false,
-            display: true,
-            drawOnChartArea: true,
-            drawTicks: false,
-            borderDash: [5, 5],
-            color: "rgba(255, 255, 255, .2)",
-          },
-          ticks: {
-            display: true,
-            color: "#f8f9fa",
-            padding: 10,
-            font: {
-              size: 14,
-              weight: 300,
-              family: "Roboto",
-              style: "normal",
-              lineHeight: 2,
-            },
-          },
-        },
-      },
-    },
   });
 </script>
