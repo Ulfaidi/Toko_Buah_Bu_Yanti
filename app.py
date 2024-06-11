@@ -3,7 +3,6 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime, timedelta
-import locale
 from bson.objectid import ObjectId
 import random
 import string
