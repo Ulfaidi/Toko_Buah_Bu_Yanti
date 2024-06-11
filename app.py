@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime, timedelta
+import time
 from bson.objectid import ObjectId
 import random
 import string
@@ -10,6 +11,7 @@ import os
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 
 # Konfigurasi MongoDB
 client = MongoClient('mongodb://tes:sparta@ac-3yctn6n-shard-00-00.tlo2vsi.mongodb.net:27017,ac-3yctn6n-shard-00-01.tlo2vsi.mongodb.net:27017,ac-3yctn6n-shard-00-02.tlo2vsi.mongodb.net:27017/?ssl=true&replicaSet=atlas-eeaf5d-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0')
@@ -21,6 +23,13 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if 'username' not in session:
             return redirect(url_for('login'))
+        
+        # Cek ketidakaktifan
+        if 'last_activity' in session and time.time() - session['last_activity'] > app.config['PERMANENT_SESSION_LIFETIME'].total_seconds():
+            session.clear()
+            return redirect(url_for('login'))
+        session['last_activity'] = time.time()
+
         return f(*args, **kwargs)
     return decorated_function
 
@@ -46,6 +55,8 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['username'] = user['username']
             session['role'] = user['role']
+            session['last_activity'] = time.time()
+            session.permanent = True 
             if user['role'] == 'admin':
                 return redirect(url_for('dashboard'))
             else:
