@@ -202,7 +202,8 @@ def home():
 @login_required
 @role_required('user')
 def pageProduct():
-    return render_template('page/product.html')
+    products = list(db.products.find())
+    return render_template('page/product.html',products=products)
 
 @app.route('/detail')
 @login_required
@@ -394,7 +395,7 @@ def editProduct(_id):
     product_exists = False
 
     if request.method == 'POST':
-        id = request.form['_id']  
+        id = request.form['_id']
         nama = request.form['nama']
         satuan = request.form['satuan']
         harga = request.form['harga']
@@ -413,14 +414,26 @@ def editProduct(_id):
                 'harga': harga,
                 'deskripsi': deskripsi
             }
+
             if nama_gambar:
+                # Dapatkan nama file gambar lama dari database
+                old_product = db.products.find_one({'_id': ObjectId(id)})
+                old_image_filename = old_product.get('gambar')
+
+                # Simpan gambar baru
                 nama_file_asli = nama_gambar.filename
                 nama_file_gambar = nama_file_asli.split('/')[-1]
                 file_path = f'static/images/imgProducts/{nama_file_gambar}'
                 nama_gambar.save(file_path)
                 doc['gambar'] = nama_file_gambar
 
-            db.products.update_one({"_id": ObjectId(id)}, {"$set": doc}) 
+                # Hapus file gambar lama dari folder jika ada
+                if old_image_filename:
+                    old_image_path = os.path.join('static/images/imgProducts', old_image_filename)
+                    if os.path.exists(old_image_path):
+                        os.remove(old_image_path)
+
+            db.products.update_one({"_id": ObjectId(id)}, {"$set": doc})
             return redirect(url_for("product"))
 
     id = ObjectId(_id)
@@ -512,11 +525,22 @@ def editSupplier(_id):
                 'noTelp': noTelp,
             }
             if nama_gambar:
+                # Dapatkan nama file gambar lama dari database
+                old_product = db.suppliers.find_one({'_id': ObjectId(id)})
+                old_image_filename = old_product.get('gambar')
+
+                # Simpan gambar baru
                 nama_file_asli = nama_gambar.filename
                 nama_file_gambar = nama_file_asli.split('/')[-1]
                 file_path = f'static/images/imgSuppliers/{nama_file_gambar}'
                 nama_gambar.save(file_path)
                 doc['gambar'] = nama_file_gambar
+
+                # Hapus file gambar lama dari folder jika ada
+                if old_image_filename:
+                    old_image_path = os.path.join('static/images/imgSuppliers', old_image_filename)
+                    if os.path.exists(old_image_path):
+                        os.remove(old_image_path)
 
             db.suppliers.update_one({"_id": ObjectId(id)}, {"$set": doc}) 
             return redirect(url_for("supplier"))

@@ -38,7 +38,7 @@
                         <div class="input-group input-group-outline">
                           <label class="form-label"></label>
                           <img id="gambar-preview" src="../static/images/ImgSuppliers/{{ data[0].gambar }}" alt="" width="200" />
-                          <input type="file" class="form-control" accept=".png,.jpg,.jpeg" name="gambar" style="border-radius: 13px" placeholder="Enter the Image" onchange="previewImage(event)" />
+                          <input type="file" class="form-control" accept=".png,.jpg,.jpeg" id="gambar" name="gambar" style="border-radius: 13px" placeholder="Enter the Image" onchange="previewImage(event)" />
                         </div>
                       </td>
                     </tr>
@@ -79,6 +79,7 @@
     nama: document.getElementById("nama").value,
     alamat: document.getElementById("alamat").value,
     noTelp: document.getElementById("noTelp").value,
+    gambar: null // As we don't have an initial value, we set it to null
   };
 
   function checkChanges() {
@@ -86,6 +87,7 @@
       nama: document.getElementById("nama").value,
       alamat: document.getElementById("alamat").value,
       noTelp: document.getElementById("noTelp").value,
+      gambar: document.getElementById("gambar").files.length > 0 ? document.getElementById("gambar").files[0].name : null
     };
 
     var hasChanges = Object.keys(currentValues).some(function (key) {
@@ -98,6 +100,7 @@
   document.getElementById("nama").addEventListener("input", checkChanges);
   document.getElementById("alamat").addEventListener("input", checkChanges);
   document.getElementById("noTelp").addEventListener("input", checkChanges);
+  document.getElementById("gambar").addEventListener("change", checkChanges);
 
   function confirmSave() {
     Swal.fire({
@@ -114,5 +117,14 @@
         document.getElementById("editSupplierForm").submit();
       }
     });
+  }
+
+  function previewImage(event) {
+    var reader = new FileReader();
+    reader.onload = function() {
+      var output = document.getElementById('gambar-preview');
+      output.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
   }
 </script>
