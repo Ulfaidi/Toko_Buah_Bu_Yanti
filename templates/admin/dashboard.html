@@ -67,7 +67,7 @@
           <hr class="dark horizontal" />
           <div class="d-flex justify-content-between">
             <h6 class="mb-0">Total Mingguan: Rp {{ weekly_total | format }}</h6>
-            <h6 class="mb-0">Total Hari Ini: Rp {{ last_day_total | format }}</h6>
+            <h6 class="mb-0">Total Hari ini: Rp {{ last_day_total | format }}</h6>
           </div>
         </div>
       </div>
@@ -84,11 +84,11 @@
         </div>
         <div class="card-body">
           <h6 class="mb-0">Pembelian</h6>
-          <p class="text-sm">Perbulan</p>
+          <p class="text-sm">12 Bulan Terakhir</p>
           <hr class="dark horizontal" />
-          <div class="d-flex">
-            <i class="material-icons text-sm my-auto me-1">schedule</i>
-            <p class="mb-0 text-sm">updated 4 min ago</p>
+          <div class="d-flex justify-content-between">
+            <h6 class="mb-0">Total Bulanan: </h6>
+            <h6 class="mb-0">Total Bulan ini: </h6>
           </div>
         </div>
       </div>
@@ -144,7 +144,7 @@
                   },
                   ticks: {
                       suggestedMin: 0,
-                      suggestedMax: Math.max(...salesData) + 10, // Dynamically set the max value
+                      suggestedMax: Math.max(...salesData) + 10,
                       beginAtZero: true,
                       padding: 10,
                       font: {
