@@ -222,6 +222,10 @@ def contact():
 @login_required
 @role_required('admin')
 def dashboard():
+    from datetime import datetime, timedelta
+    import calendar
+
+    # Sales Data for Last 7 Days
     end_date = datetime.now()
     start_date = end_date - timedelta(days=6)
 
@@ -242,19 +246,32 @@ def dashboard():
         "Sunday": "Minggu"
     }
     
-    
+    month_name_translation = {
+        "January": "Jan",
+        "February": "Feb",
+        "March": "Maret",
+        "April": "April",
+        "May": "Mei",
+        "June": "Juni",
+        "July": "Juli",
+        "August": "Agust",
+        "September": "Sept",
+        "October": "Okt",
+        "November": "Nov",
+        "December": "Des"
+    }
+
     daily_sales = {day: 0 for day in day_name_translation.values()}
 
     for sale in sales_data:
         sale_date = datetime.strptime(sale['tanggal_penjualan'], '%d-%m-%Y')
-        day_name = sale_date.strftime('%A')  
-        indonesian_day_name = day_name_translation.get(day_name)  
-        if indonesian_day_name:  
+        day_name = sale_date.strftime('%A')
+        indonesian_day_name = day_name_translation.get(day_name)
+        if indonesian_day_name:
             total_amount = sum(item['total_harga'] for item in sale['items'])
             daily_sales[indonesian_day_name] += total_amount
 
     weekly_total = sum(daily_sales.values())
-
     last_day_total = daily_sales[day_name_translation[end_date.strftime('%A')]]
 
     sales_chart_data = []
@@ -264,6 +281,41 @@ def dashboard():
         indonesian_day_name = day_name_translation.get(day)
         labels.append(indonesian_day_name)
         sales_chart_data.append(daily_sales[indonesian_day_name])
+
+    # Purchases Data for Last 12 Months
+    end_month = end_date.replace(day=1)
+    start_month = (end_month - timedelta(days=365)).replace(day=1)
+
+    purchases_data = db.purchases.find({
+        'tanggal_pembelian': {
+            '$gte': start_month.strftime('%d-%m-%Y'),
+            '$lte': end_date.strftime('%d-%m-%Y')
+        }
+    })
+
+    # Initialize monthly purchases dictionary for the last 12 months
+    monthly_purchases = {f"{end_month.year}-{str(end_month.month).zfill(2)}": 0}
+    for i in range(1, 12):
+        previous_month = (end_month - timedelta(days=i * 30)).replace(day=1)
+        month_key = f"{previous_month.year}-{str(previous_month.month).zfill(2)}"
+        monthly_purchases[month_key] = 0
+
+    # Calculate purchases for each month
+    for purchase in purchases_data:
+        purchase_date = datetime.strptime(purchase['tanggal_pembelian'], '%d-%m-%Y')
+        month_key = f"{purchase_date.year}-{str(purchase_date.month).zfill(2)}"
+        if month_key in monthly_purchases:
+            total_amount = sum(item['total_harga'] for item in purchase['items'])
+            monthly_purchases[month_key] += total_amount
+
+    # Ensure the order of months is correct (from oldest to newest)
+    sorted_months = sorted(monthly_purchases.keys())
+    purchases_chart_data = [monthly_purchases[month] for month in sorted_months]
+    purchase_labels = [month_name_translation[calendar.month_name[int(month.split('-')[1])]] for month in sorted_months]
+
+    monthly_total = sum(purchases_chart_data)
+    last_month_key = f"{end_date.year}-{str(end_date.month).zfill(2)}"
+    last_month_total = monthly_purchases[last_month_key]
 
     suppliers = db.suppliers.count_documents({})
     products = db.products.count_documents({})
@@ -278,8 +330,12 @@ def dashboard():
         weekly_total=weekly_total,
         last_day_total=last_day_total,
         sales_chart_data=sales_chart_data,
-        labels=labels
-    )
+        labels=labels,
+        monthly_total=monthly_total,
+        last_month_total=last_month_total,
+        purchases_chart_data=purchases_chart_data,
+        purchase_labels=purchase_labels
+        )
 
 
 # Produk ###############################################################################################
