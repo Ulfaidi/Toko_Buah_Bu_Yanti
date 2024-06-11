@@ -205,11 +205,12 @@ def pageProduct():
     products = list(db.products.find())
     return render_template('page/product.html',products=products)
 
-@app.route('/detail')
+@app.route('/detail/<product_id>')
 @login_required
 @role_required('user')
-def detail():
-    return render_template('page/detail.html')
+def detail(product_id):
+    product = db.products.find_one({"_id": ObjectId(product_id)})
+    return render_template('page/detail.html', product=product)
 
 @app.route('/about')
 def about():
