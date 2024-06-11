@@ -27,7 +27,7 @@
                       <td><label for="gambar">Gambar:</label></td>
                       <td>
                         <div class="input-group input-group-outline">
-                          <img src="{{ url_for('static', filename='assets/imgProducts/' ~ product['gambar']) }}" alt="{{ product['nama'] }}" class="img-thumbnail" width="100" />
+                          <img src="{{ url_for('static', filename='images/imgProducts/' ~ product['gambar']) }}" alt="{{ product['nama'] }}" class="img-thumbnail" width="100" />
                         </div>
                       </td>
                     </tr>
@@ -76,6 +76,17 @@
   document.getElementById("editStockForm").addEventListener("submit", function (event) {
     event.preventDefault();
     var form = this;
+    var stok = parseInt(document.getElementById("stok").value);
+    var pengurangan = parseInt(document.getElementById("pengurangan").value);
+
+    if (pengurangan > stok) {
+      Swal.fire({
+        title: "Error!",
+        text: "Pengurangan stok tidak boleh melebihi jumlah stok yang tersedia.",
+        icon: "error",
+      });
+      return;
+    }
 
     Swal.fire({
       title: "Apakah Anda yakin?",

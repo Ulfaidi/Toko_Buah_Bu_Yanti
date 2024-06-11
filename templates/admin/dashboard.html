@@ -66,8 +66,8 @@
                 <p class="text-sm">Seminggu Terakhir</p>
                 <hr class="dark horizontal" />
                 <div class="d-flex justify-content-between">
-                    <h6 class="mb-0">Total Mingguan: Rp {{ weekly_total | format }}</h6>
-                    <h6 class="mb-0">Total Hari ini: Rp {{ last_day_total | format }}</h6>
+                    <h6 class="mb-0">Total Mingguan: Rp {{ weekly_total | format_number  }}</h6>
+                    <h6 class="mb-0">Total Hari ini: Rp {{ last_day_total | format_number  }}</h6>
                 </div>
             </div>
         </div>
@@ -87,8 +87,8 @@
                 <p class="text-sm">Setahun Terakhir</p>
                 <hr class="dark horizontal" />
                 <div class="d-flex justify-content-between">
-                    <h6 class="mb-0">Total Bulanan: Rp {{ monthly_total | format }}</h6>
-                    <h6 class="mb-0">Total Bulan ini: Rp {{ last_month_total | format }}</h6>
+                    <h6 class="mb-0">Total Bulanan: Rp {{ monthly_total | format_number  }}</h6>
+                    <h6 class="mb-0">Total Bulan ini: Rp {{ last_month_total | format_number  }}</h6>
                 </div>
             </div>
         </div>

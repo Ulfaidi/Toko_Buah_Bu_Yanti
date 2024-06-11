@@ -339,6 +339,11 @@ def dashboard():
         purchase_labels=purchase_labels
         )
 
+def format_number(value):
+    return "{:,.0f}".format(value)
+
+app.jinja_env.filters['format_number'] = format_number
+
 
 # Produk ###############################################################################################
 # Halaman Produk ###############################################################################################
@@ -591,7 +596,7 @@ def editStock(_id):
         pengurangan = int(request.form['pengurangan'])
         keterangan = request.form['keterangan']
 
-        # Simpan informasi pengurangan stok dan keterangan (jika ada) ke dalam tabel lain
+        # Simpan informasi pengurangan stok dan keterangan (jika ada)
         if pengurangan > 0:
             pengurangan_doc = {
                 'nama_barang': db.products.find_one({'_id': id})['nama'],
