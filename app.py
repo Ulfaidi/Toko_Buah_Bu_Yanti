@@ -655,16 +655,43 @@ def get_supplier(supplier_id):
     else:
         return jsonify({'error': 'Supplier not found'}), 404
 
-@app.route('/product/<product_id>')
-@login_required
-@role_required('admin')
-def get_product(product_id):
-    product = db.products.find_one({'_id': ObjectId(product_id)})
+@app.route('/product/<product_id>', methods=['GET'])
+def get_product_details(product_id):
+    product = db.products.find_one({'_id': ObjectId(product_id)}) # type: ignore
     if product:
-        product['_id'] = str(product['_id'])
-        return jsonify(product)
+        return jsonify({
+            '_id': str(product['_id']),
+            'nama': product['nama'],
+            'satuan': product['satuan'],
+            'harga': product['harga'],
+            'stok': product['stok'],
+            'gambar': product['gambar']
+        })
     else:
         return jsonify({'error': 'Product not found'}), 404
+
+@app.route('/save_sales', methods=['POST'])
+def save_sales():
+    data = request.json
+    try:
+        for sales_code, sales_details in data.items():
+            items = sales_details['items']
+            for item in items:
+                product = db.products.find_one({'_id': ObjectId(item['_id'])})
+                if product and product['stok'] >= item['jumlah']:
+                    new_stock = product['stok'] - item['jumlah']
+                    db.products.update_one(
+                        {'_id': ObjectId(item['_id'])},
+                        {'$set': {'stok': new_stock}}
+                    )
+                else:
+                    return jsonify({'error': 'Stock exceeded for product: ' + item['produk']}), 400
+
+        db.sales.insert_one(data)
+        return jsonify({'success': 'Sales saved successfully'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/addPembelian', methods=['POST'])
 def addPembelian():

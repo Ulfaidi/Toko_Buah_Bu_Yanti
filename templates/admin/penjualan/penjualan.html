@@ -135,7 +135,6 @@
           document.getElementById("productImage").src = `../static/images/imgProducts/${data.gambar}`;
           document.getElementById("productPrice").value = data.harga;
           document.getElementById("productUnit").value = data.satuan;
-          document.getElementById("productPrice").value = data.harga;
           calculateSubtotal();
         })
         .catch((error) => console.error("Error:", error));
