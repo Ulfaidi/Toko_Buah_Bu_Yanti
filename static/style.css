@@ -22,3 +22,26 @@
   display: inline-block;
   text-align: center;
 }
+/* Upload gambar Produk dan supplier */
+#drop-area {
+  height: 150px;
+  width: 150px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+#drop-area.highlight {
+  border-color: #007bff;
+}
+#drop-area .content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+#drop-area img {
+  max-height: 150px;
+  margin: 10px;
+  display: inline-block;
+}
