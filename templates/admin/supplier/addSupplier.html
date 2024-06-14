@@ -35,8 +35,17 @@
                       <td><label for="gambar">Gambar :</label></td>
                       <td>
                         <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <input type="file" class="form-control" id="gambar" name="gambar" accept="image/png, image/jpeg" style="border-radius: 13px" required />
+                          <div class="card">
+                            <div class="card-body">
+                              <div id="drop-area" class="border rounded d-flex justify-content-center align-items-center">
+                                <div class="content">
+                                  <i class="bi bi-cloud-arrow-up-fill text-primary" style="font-size: 48px"></i>
+                                  <p class="mt-3">Pilih Gambar</p>
+                                </div>
+                              </div>
+                              <input type="file" id="gambar" name="gambar" multiple accept="image/*" class="d-none" />
+                            </div>
+                          </div>
                         </div>
                       </td>
                     </tr>
