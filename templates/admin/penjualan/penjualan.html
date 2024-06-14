@@ -125,6 +125,7 @@
 <script>
   let salesData = {};
   let savedSalesCodes = {};
+  let currentStock = 0;
 
   function fetchProductDetails() {
     const productId = document.getElementById("productSelect").value;
@@ -135,6 +136,7 @@
           document.getElementById("productImage").src = `../static/images/imgProducts/${data.gambar}`;
           document.getElementById("productPrice").value = data.harga;
           document.getElementById("productUnit").value = data.satuan;
+          currentStock = data.stok;
           calculateSubtotal();
         })
         .catch((error) => console.error("Error:", error));
@@ -159,6 +161,8 @@
     document.getElementById("subtotal").value = total;
   }
 
+  
+
   function saveSalesDetails() {
     const salesCode = document.getElementById("salesCode").textContent;
     const productSelect = document.getElementById("productSelect");
@@ -170,6 +174,33 @@
     const subtotal = parseFloat(document.getElementById("subtotal").value);
     const salesDate = new Date().toISOString().split("T")[0];
 
+    if (currentStock === 0) {
+      Swal.fire({
+        title: "Error!",
+        text: "Stok Kosong!",
+        icon: "error",
+      });
+      return;
+    }
+
+    if (productStock > currentStock) {
+      Swal.fire({
+        title: "Error!",
+        text: "Stok tidak mencukupi!",
+        icon: "error",
+      });
+      return;
+    }
+
+    if (productStock <= 0) {
+      Swal.fire({
+        title: "Error!",
+        text: "Jumlah harus lebih besar dari 0!",
+        icon: "error",
+      });
+      return;
+    }
+    
     if (!salesData[salesCode]) {
       salesData[salesCode] = {
         tanggal_penjualan: salesDate,
