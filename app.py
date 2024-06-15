@@ -207,7 +207,8 @@ def logout():
 
 @app.route('/')
 def home():
-    return render_template('page/home.html')
+    products = list(db.products.find())
+    return render_template('page/home.html',products=products)
 
 @app.route('/pageProduct')
 @login_required

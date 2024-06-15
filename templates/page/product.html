@@ -21,7 +21,7 @@
         <div class="vesitable-img">
           <a href="{{ url_for('detail', product_id=product._id) }}">
           <img src="../static/images/imgProducts/{{ product.gambar }}" class="img-fluid w-100 rounded-top" alt="" />
-        </a>
+          </a>
         </div>
         <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px">{% if product.stok > 0 %} Tersedia {% else %} Kosong {% endif %}</div>
         <div class="p-4 rounded-bottom">
