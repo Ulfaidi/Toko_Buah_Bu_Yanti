@@ -8,7 +8,7 @@
 
 <!-- Single Product Start -->
 <div class="container py-5 mt-5 d-flex justify-content-center">
-  <div class="row border">
+  <div class="row border" style="width: 1400px;">
     <!-- Image Column -->
     <div class="col-lg-5 mb-4 d-flex justify-content-center">
       <img src="../static/images/imgProducts/{{ product.gambar }}" alt="Gambar" class="img-fluid rounded" style="height: 500px" />
@@ -27,7 +27,13 @@
       <div class="h-100 d-flex flex-column justify-content-start mt-5">
         <h4>{{ product.nama }}</h4>
         <h5>Rp {{ product.harga }} / {{ product.satuan }}</h5>
-        <h5>{{ product.stok }} {{ product.satuan }} Tersedia</h5>
+        <h5>  
+          {% if product.stok > 0 %}
+          {{ product.stok }} {{ product.satuan }} Tersedia
+          {% else %}
+          Tidak Tersedia
+          {% endif %}
+        </h5>
         <div class="text-justify">
           <h6>{{ product.deskripsi }}</h6>
         </div>
