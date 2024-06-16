@@ -1,70 +1,69 @@
-{% include 'admin/templates/header.html' %}
-<div class="container-fluid py-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="card my-4">
-        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-          <div class="bg-gradient-custom shadow-success border-radius-lg pt-4 pb-3">
-            <h6 class="text-white text-capitalize ps-3">Edit User</h6>
-          </div>
+{% extends 'admin/templates/base.html' %}
+{% block content %}
+
+<div class="row">
+  <div class="col-12">
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-custom shadow-success border-radius-lg pt-4 pb-3">
+          <h6 class="text-white text-capitalize ps-3">Edit User</h6>
         </div>
-        <div class="card-body px-0 pb-2">
-          <div class="table-responsive p-0">
-            <div class="container mt-5">
-              {% if update_failed %}
-              <div class="alert alert-danger alert-dismissible text-white" role="alert">
-                <span class="text-sm">Update gagal. Silakan coba lagi.</span>
-                <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              {% endif %}
-              <form method="POST" action="{{ url_for('editUser', _id=user._id) }}" enctype="multipart/form-data" oninput="checkChanges()" id="editForm">
-                <table class="table">
-                  <tbody>
-                    <tr>
-                      <td><label for="username">Username :</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="password">Password :</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password" />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="role">Role :</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <select class="form-control" id="role" name="role" required>
-                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
-                            <option value="user" {% if user.role == 'user' %}selected{% endif %}>User</option>
-                          </select>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <button type="submit" id="updateButton" class="btn btn-primary" disabled>Simpan</button>
-                <a href="{{ url_for('user') }}" class="btn btn-secondary">Kembali</a>
-              </form>
+      </div>
+      <div class="card-body px-0 pb-2">
+        <div class="table-responsive p-0">
+          <div class="container mt-5">
+            {% if update_failed %}
+            <div class="alert alert-danger alert-dismissible text-white" role="alert">
+              <span class="text-sm">Update gagal. Silakan coba lagi.</span>
+              <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
             </div>
+            {% endif %}
+            <form method="POST" action="{{ url_for('editUser', _id=user._id) }}" enctype="multipart/form-data" oninput="checkChanges()" id="editForm">
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td><label for="username">Username :</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <label class="form-label"></label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required />
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="password">Password :</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <label class="form-label"></label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Leave blank to keep current password" />
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="role">Role :</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <label class="form-label"></label>
+                        <select class="form-control" id="role" name="role" required>
+                          <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                          <option value="user" {% if user.role == 'user' %}selected{% endif %}>User</option>
+                        </select>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button type="submit" id="updateButton" class="btn btn-primary" disabled>Simpan</button>
+              <a href="{{ url_for('user') }}" class="btn btn-secondary">Kembali</a>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-{% include 'admin/templates/footer.html' %}
 
 <script>
   const originalValues = {
@@ -100,3 +99,4 @@
   });
 </script>
 
+{% endblock %}

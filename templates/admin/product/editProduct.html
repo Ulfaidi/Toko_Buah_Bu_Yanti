@@ -1,97 +1,97 @@
-{% include 'admin/templates/header.html' %}
-<div class="container-fluid py-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="card my-4">
-        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-          <div class="bg-gradient-custom shadow-success border-radius-lg pt-4 pb-3">
-            <h6 class="text-white text-capitalize ps-3">Edit Produk</h6>
-          </div>
+{% extends 'admin/templates/base.html' %}
+{% block content %}
+
+<div class="row">
+  <div class="col-12">
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-custom shadow-success border-radius-lg pt-4 pb-3">
+          <h6 class="text-white text-capitalize ps-3">Edit Produk</h6>
         </div>
-        <div class="card-body px-0 pb-2">
-          <div class="table-responsive p-0">
-            <div class="container mt-5">
-              {% if product_exists %}
-              <div class="alert alert-danger alert-dismissible text-white" role="alert">
-                <span class="text-sm">Produk sudah ada <a href="#nama" class="alert-link text-white">Nama Barang</a>. Mohon gunakan nama barang yang berbeda.</span>
-                <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              {% endif %}
-              <form id="editProductForm" method="POST" action="/editProduct/{{ data[0]._id }}" enctype="multipart/form-data">
-                <input type="hidden" class="form-control" name="_id" value="{{ data[0]._id }}" />
-                <table class="table">
-                  <tbody>
-                    <tr>
-                      <td><label for="nama">Nama Produk:</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <input type="text" class="form-control" id="nama" name="nama" required value="{{ data[0].nama }}" />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="gambar">Gambar :</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <div class="card">
-                            <div class="card-body">
-                              <div id="drop-area" class="border rounded d-flex justify-content-center align-items-center">
-                                <div class="content">
-                                  <img id="gambar-preview" src="../static/images/ImgProducts/{{ data[0].gambar }}" />
-                                </div>
+      </div>
+      <div class="card-body px-0 pb-2">
+        <div class="table-responsive p-0">
+          <div class="container mt-5">
+            {% if product_exists %}
+            <div class="alert alert-danger alert-dismissible text-white" role="alert">
+              <span class="text-sm">Produk sudah ada <a href="#nama" class="alert-link text-white">Nama Barang</a>. Mohon gunakan nama barang yang berbeda.</span>
+              <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            {% endif %}
+            <form id="editProductForm" method="POST" action="/editProduct/{{ data[0]._id }}" enctype="multipart/form-data">
+              <input type="hidden" class="form-control" name="_id" value="{{ data[0]._id }}" />
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td><label for="nama">Nama Produk:</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <label class="form-label"></label>
+                        <input type="text" class="form-control" id="nama" name="nama" required value="{{ data[0].nama }}" />
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="gambar">Gambar :</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <div class="card">
+                          <div class="card-body">
+                            <div id="drop-area" class="border rounded d-flex justify-content-center align-items-center">
+                              <div class="content">
+                                <img id="gambar-preview" src="../static/images/ImgProducts/{{ data[0].gambar }}" />
                               </div>
-                              <input type="file" id="gambar" name="gambar" multiple accept="image/*" class="d-none"/>
                             </div>
+                            <input type="file" id="gambar" name="gambar" multiple accept="image/*" class="d-none"/>
                           </div>
                         </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="satuan">Satuan :</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <select class="form-control" id="satuan" name="satuan" required>
-                            <option value="Kg" {{ 'selected' if data[0].satuan == 'Kg' else '' }}>Kg</option>
-                            <option value="Buah" {{ 'selected' if data[0].satuan == 'Buah' else '' }}>Buah</option>
-                          </select>
-                        </div>
-                      </td>
-                    </tr>                    
-                    <tr>
-                      <td><label for="harga">Harga :</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <input type="number" class="form-control" id="harga" name="harga" required value="{{ data[0].harga }}" />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="deskripsi">Deskripsi Produk:</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <textarea class="form-control" id="deskripsi" name="deskripsi" rows="5">{{ data[0].deskripsi }}</textarea>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Simpan</button>
-                <a href="{{ url_for('product') }}" class="btn btn-secondary">Kembali</a>
-              </form>
-            </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="satuan">Satuan :</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <label class="form-label"></label>
+                        <select class="form-control" id="satuan" name="satuan" required>
+                          <option value="Kg" {{ 'selected' if data[0].satuan == 'Kg' else '' }}>Kg</option>
+                          <option value="Buah" {{ 'selected' if data[0].satuan == 'Buah' else '' }}>Buah</option>
+                        </select>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="harga">Harga :</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <label class="form-label"></label>
+                        <input type="number" class="form-control" id="harga" name="harga" required value="{{ data[0].harga }}" />
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="deskripsi">Deskripsi Produk:</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <label class="form-label"></label>
+                        <textarea class="form-control" id="deskripsi" name="deskripsi" rows="5">{{ data[0].deskripsi }}</textarea>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Simpan</button>
+              <a href="{{ url_for('product') }}" class="btn btn-secondary">Kembali</a>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-{% include 'admin/templates/footer.html' %}
+
 <script>
   var originalValues = {
     nama: document.getElementById("nama").value,
@@ -142,3 +142,5 @@
     });
   });
 </script>
+
+{% endblock %}

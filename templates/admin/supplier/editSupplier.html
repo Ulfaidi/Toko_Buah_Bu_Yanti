@@ -1,85 +1,84 @@
-{% include 'admin/templates/header.html' %}
-<div class="container-fluid py-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="card my-4">
-        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-          <div class="bg-gradient-custom shadow-success border-radius-lg pt-4 pb-3">
-            <h6 class="text-white text-capitalize ps-3">Edit Supplier</h6>
-          </div>
+{% extends 'admin/templates/base.html' %} 
+{% block content %}
+
+<div class="row">
+  <div class="col-12">
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-custom shadow-success border-radius-lg pt-4 pb-3">
+          <h6 class="text-white text-capitalize ps-3">Edit Supplier</h6>
         </div>
-        <div class="card-body px-0 pb-2">
-          <div class="table-responsive p-0">
-            <div class="container mt-5">
-              {% if supplier_exists %}
-              <div class="alert alert-danger alert-dismissible text-white" role="alert">
-                <span class="text-sm">Supplier sudah ada <a href="#nama" class="alert-link text-white">Nama Supplier</a>. Mohon gunakan nama supplier yang berbeda.</span>
-                <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              {% endif %}
-              <form id="editSupplierForm" method="POST" action="/editSupplier/{{ data[0]._id }}" enctype="multipart/form-data">
-                <input type="hidden" class="form-control" name="_id" value="{{ data[0]._id }}" />
-                <table class="table">
-                  <tbody>
-                    <tr>
-                      <td><label for="nama">Nama Supplier :</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <input type="text" class="form-control" id="nama" name="nama" required value="{{ data[0].nama }}" />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="gambar">Gambar :</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <div class="card">
-                            <div class="card-body">
-                              <div id="drop-area" class="border rounded d-flex justify-content-center align-items-center">
-                                <div class="content">
-                                  <img id="gambar-preview" src="../static/images/ImgSuppliers/{{ data[0].gambar }}" />
-                                </div>
+      </div>
+      <div class="card-body px-0 pb-2">
+        <div class="table-responsive p-0">
+          <div class="container mt-5">
+            {% if supplier_exists %}
+            <div class="alert alert-danger alert-dismissible text-white" role="alert">
+              <span class="text-sm">Supplier sudah ada <a href="#nama" class="alert-link text-white">Nama Supplier</a>. Mohon gunakan nama supplier yang berbeda.</span>
+              <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            {% endif %}
+            <form id="editSupplierForm" method="POST" action="/editSupplier/{{ data[0]._id }}" enctype="multipart/form-data">
+              <input type="hidden" class="form-control" name="_id" value="{{ data[0]._id }}" />
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td><label for="nama">Nama Supplier :</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <label class="form-label"></label>
+                        <input type="text" class="form-control" id="nama" name="nama" required value="{{ data[0].nama }}" />
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="gambar">Gambar :</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <div class="card">
+                          <div class="card-body">
+                            <div id="drop-area" class="border rounded d-flex justify-content-center align-items-center">
+                              <div class="content">
+                                <img id="gambar-preview" src="../static/images/ImgSuppliers/{{ data[0].gambar }}" />
                               </div>
-                              <input type="file" id="gambar" name="gambar" multiple accept="image/*" class="d-none"/>
                             </div>
+                            <input type="file" id="gambar" name="gambar" multiple accept="image/*" class="d-none" />
                           </div>
                         </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="alamat">Alamat :</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <input type="text" class="form-control" id="alamat" name="alamat" required value="{{ data[0].alamat }}" />
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><label for="noTelp">Nomor Telepon :</label></td>
-                      <td>
-                        <div class="input-group input-group-outline">
-                          <label class="form-label"></label>
-                          <input type="number" class="form-control" id="noTelp" name="noTelp" required value="{{ data[0].noTelp }}" />
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <button type="button" class="btn btn-primary" id="simpanButton" onclick="confirmSave()" disabled>Simpan</button>
-                <a href="{{ url_for('supplier') }}" class="btn btn-secondary">Kembali</a>
-              </form>
-            </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="alamat">Alamat :</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <label class="form-label"></label>
+                        <input type="text" class="form-control" id="alamat" name="alamat" required value="{{ data[0].alamat }}" />
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><label for="noTelp">Nomor Telepon :</label></td>
+                    <td>
+                      <div class="input-group input-group-outline">
+                        <label class="form-label"></label>
+                        <input type="number" class="form-control" id="noTelp" name="noTelp" required value="{{ data[0].noTelp }}" />
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button type="button" class="btn btn-primary" id="simpanButton" onclick="confirmSave()" disabled>Simpan</button>
+              <a href="{{ url_for('supplier') }}" class="btn btn-secondary">Kembali</a>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-{% include 'admin/templates/footer.html' %}
 
 <script>
   var originalValues = {
@@ -126,3 +125,5 @@
     });
   }
 </script>
+
+{% endblock %}
