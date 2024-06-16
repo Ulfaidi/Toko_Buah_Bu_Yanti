@@ -20,7 +20,7 @@
       <div class="border border-primary rounded position-relative vesitable-item product-item">
         <div class="vesitable-img">
           <a href="{{ url_for('detail', product_id=product._id) }}">
-          <img src="../static/images/imgProducts/{{ product.gambar }}" class="img-fluid w-100 rounded-top" alt="" />
+            <img src="../static/images/imgProducts/{{ product.gambar }}" class="img-fluid w-100 rounded-top" alt="" />
           </a>
         </div>
         <div class="text-white bg-primary px-3 py-1 rounded position-absolute" style="top: 10px; right: 10px">{% if product.stok > 0 %} Tersedia {% else %} Kosong {% endif %}</div>
@@ -45,18 +45,62 @@
 <script>
   function filterProducts() {
     var input, filter, productContainer, productItems, productName, i;
-    input = document.getElementById('searchInput');
+    input = document.getElementById("searchInput");
     filter = input.value.toLowerCase();
-    productContainer = document.getElementById('productContainer');
-    productItems = productContainer.getElementsByClassName('product-item');
+    productContainer = document.getElementById("productContainer");
+    productItems = Array.from(productContainer.getElementsByClassName("product-item"));
+
+    // Separate matching and non-matching items
+    var matchingItems = [];
+    var nonMatchingItems = [];
 
     for (i = 0; i < productItems.length; i++) {
-      productName = productItems[i].getElementsByTagName('h4')[0];
+      productName = productItems[i].getElementsByTagName("h4")[0];
       if (productName.innerHTML.toLowerCase().indexOf(filter) > -1) {
-        productItems[i].style.display = "";
+        matchingItems.push(productItems[i]);
       } else {
-        productItems[i].style.display = "none";
+        nonMatchingItems.push(productItems[i]);
       }
     }
+
+    // Clear the container
+    productContainer.innerHTML = "";
+
+    // Add matching items first
+    for (i = 0; i < matchingItems.length; i++) {
+      productContainer.appendChild(matchingItems[i]);
+    }
+
+    // Add non-matching items after
+    for (i = 0; i < nonMatchingItems.length; i++) {
+      productContainer.appendChild(nonMatchingItems[i]);
+    }
+
+    // Reinitialize the carousel to reflect the filtered results
+    $(".owl-carousel").owlCarousel("destroy"); // Destroy the existing carousel instance
+    initializeCarousel(); // Reinitialize the carousel with the filtered items
   }
+
+  function initializeCarousel() {
+    $(".owl-carousel").owlCarousel({
+      loop: true,
+      margin: 10,
+      nav: true,
+      responsive: {
+        0: {
+          items: 1,
+        },
+        600: {
+          items: 3,
+        },
+        1000: {
+          items: 4,
+        },
+      },
+    });
+  }
+
+  $(document).ready(function () {
+    initializeCarousel();
+  });
 </script>

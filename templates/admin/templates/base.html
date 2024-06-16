@@ -34,6 +34,8 @@
 
   <!-- link icon dari bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  {% if request.path != '/loginAdmin' and request.path != '/login' and request.path != '/register' %}
+    
   <style>
     .input-group-outline {
       position: relative;
@@ -70,6 +72,7 @@
       box-shadow: 0 0 0 0.2rem rgba(129, 196, 8, 0.25);
     }
   </style>
+  {% endif %}
   
 </head>
 
@@ -83,9 +86,15 @@
     {% include 'admin/templates/navbar.html' %}
     {% endif %}
     <!-- End Navbar -->
+    {% if request.path != '/loginAdmin' and request.path != '/login' and request.path != '/register' %} 
     <div class="container-fluid py-4">
+    {% endif %}  
+
         {% block content %}{% endblock %}
+        
+      {% if request.path != '/loginAdmin' and request.path != '/login' and request.path != '/register' %}
       {% include 'admin/templates/footer.html' %}
+      {% endif %}
     </div>
   </main>
 <script src="../static/script.js"></script>
