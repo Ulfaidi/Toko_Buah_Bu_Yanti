@@ -1,4 +1,4 @@
-{% extends 'admin/templates/base.html' %} 
+{% extends 'admin/templates/base.html' %}
 {% block content %}
 
 <div class="page-header align-items-start min-vh-100" style="background-image: url('../static/images/backgroundlogin.png')">
@@ -9,7 +9,7 @@
       <div class="col-lg-4 col-md-8 col-12 mx-auto">
         <div class="card z-index-0 fadeIn3 fadeInBottom">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-            <a href="/">
+            <a href="/" data-bs-toggle="tooltip" data-bs-placement="top" title="Kembali ke Beranda">
               <div class="bg-gradient-custom shadow-custom border-radius-lg py-3 pe-1">
                 <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">
                   <img src="../static/images/favicon.png" class="avatar avatar-sm me-1 border-radius-lg" alt="user1" />
@@ -22,12 +22,18 @@
             <form role="form" class="text-start" method="POST" action="{{ url_for('login') }}">
               <div class="input-group input-group-outline my-3">
                 <label class="form-label" for="username">Username</label>
-                <input type="text" id="username" name="username" class="form-control" />
+                <input type="text" id="username" name="username" class="form-control" minlength="2" required 
+                       oninvalid="this.setCustomValidity('Username minimal 2 karakter')" 
+                       oninput="this.setCustomValidity('')" />
+                <small class="text-danger" id="usernameError" style="display: none;">Username minimal 2 karakter</small>
               </div>
 
               <div class="input-group input-group-outline mb-3">
                 <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" />
+                <input type="password" id="password" name="password" class="form-control" minlength="8" required 
+                       oninvalid="this.setCustomValidity('Password minimal 8 karakter')" 
+                       oninput="this.setCustomValidity('')" />
+                <small class="text-danger" id="passwordError" style="display: none;">Password minimal 8 karakter</small>
               </div>
 
               <div class="text-center">
@@ -60,3 +66,28 @@
 </div>
 
 {% endblock %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+  const usernameError = document.getElementById('usernameError');
+  const passwordError = document.getElementById('passwordError');
+
+  usernameInput.addEventListener('input', function() {
+    if (usernameInput.validity.valid) {
+      usernameError.style.display = 'none';
+    } else {
+      usernameError.style.display = 'block';
+    }
+  });
+
+  passwordInput.addEventListener('input', function() {
+    if (passwordInput.validity.valid) {
+      passwordError.style.display = 'none';
+    } else {
+      passwordError.style.display = 'block';
+    }
+  });
+});
+</script>

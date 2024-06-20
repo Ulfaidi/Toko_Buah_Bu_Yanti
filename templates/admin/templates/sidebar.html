@@ -1,7 +1,7 @@
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-white" id="sidenav-main">
   <div class="sidenav-header bg-gradient-custom">
     <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-    <a class="navbar-brand m-0" href="/" target="_blank">
+    <a class="navbar-brand m-0" href="/" target="_blank" data-bs-toggle="tooltip" data-bs-placement="left" title="Ke Beranda">
       <img src="../static/images/favicon.png" class="navbar-brand-img h-100" alt="main_logo" />
       <span class="ms-1 font-weight-bold text-white">Toko Buah Bu Yanti</span>
     </a>
@@ -70,9 +70,30 @@
       </li>
       <div class="sidenav-footer position-absolute w-100 bottom-0">
         <div class="mx-3">
-          <a class="btn btn-outline-primary mt-4 w-100" href="/logoutAdmin" type="button">Keluar</a>
+          <a class="btn btn-outline-primary mt-4 w-100" id="logout-button" href="/logoutAdmin" type="button">Keluar</a>
         </div>
       </div>
     </ul>
   </div>
+  <script>
+    document.getElementById('logout-button').addEventListener('click', function(event) {
+      event.preventDefault();
+      Swal.fire({
+        title: 'Apakah Anda yakin ingin keluar?',
+        text: "Anda harus masuk lagi untuk mengakses akun Anda!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, keluar!',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/logoutAdmin';
+        }
+      });
+    });
+    </script>
+    
 </aside>
+

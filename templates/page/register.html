@@ -1,83 +1,124 @@
-{% extends 'admin/templates/base.html' %} 
+{% extends 'admin/templates/base.html' %}
 {% block content %}
 
-
-        <div class="page-header min-vh-100">
-          <div class="container">
-            <div class="row">
-              <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
-                <div
-                  class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center"
-                  style="background-image: url('../static/images/backgroundlogin.png'); background-size: cover">
-                  <span class="mask bg-gradient-dark opacity-3"></span>
-                </div>
-
+<div class="page-header min-vh-100">
+  <div class="container">
+    <div class="row">
+      <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
+        <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center"
+             style="background-image: url('../static/images/backgroundlogin.png'); background-size: cover">
+          <span class="mask bg-gradient-dark opacity-3"></span>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
+        <div class="card card-plain">
+          <div class="card-header">
+            <h4 class="font-weight-bolder">Mendaftar</h4>
+            <p class="mb-0">Masukkan username dan password Anda untuk mendaftar !</p>
+          </div>
+          <div class="card-body">
+            <form role="form" method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data">
+              <div class="input-group input-group-outline mb-3">
+                <label class="form-label" for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" minlength="2" required 
+                       oninvalid="this.setCustomValidity('Username minimal 2 karakter')" 
+                       oninput="this.setCustomValidity('')" />
+                <small class="text-danger" id="usernameError" style="display: none;">Username minimal 2 karakter</small>
               </div>
-              <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
-                <div class="card card-plain">
-                  <div class="card-header">
-                    <h4 class="font-weight-bolder">Mendaftar</h4>
-                    <p class="mb-0">Masukkan username dan password Anda untuk mendaftar !</p>
-                  </div>
-                  <div class="card-body">
-                    <form role="form" method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data">
-                      <div class="input-group input-group-outline mb-3">
-                        <label class="form-label" for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required />
-                      </div>
-                      {% if registration_failed %}
-                      <div class="alert alert-danger alert-dismissible text-white" role="alert">
-                        <span class="text-sm">Registrasi gagal. {{ error_message }}</span>
-                        <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-                          <span aria-hidden="true">×</span>
-                        </button>
-                      </div>
-                      {% endif %}
-
-                      <div class="input-group input-group-outline mb-3">
-                        <label class="form-label" for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required />
-                      </div>
-
-                      <div class="input-group input-group-outline mb-3">
-                        <label class="form-label" for="confirm_password">Confirm_password</label>
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required />
-                      </div>
-
-                      <div class="text-center">
-                        <button type="submit" class="btn btn-lg bg-gradient-custom btn-lg w-100 mt-4 mb-0">Daftar</button>
-                      </div>
-                    </form>
-                  </div>
-                  <div class="card-footer text-center pt-0 px-lg-2 px-1">
-                    <p class="mb-2 text-sm mx-auto">
-                      Sudah memiliki akun?
-                      <a href="{{ url_for('login') }}" class="text-success text-gradient font-weight-bold">Masuk</a>
-                    </p>
-                  </div>
-                </div>
+              {% if registration_failed %}
+              <div class="alert alert-danger alert-dismissible text-white" role="alert">
+                <span class="text-sm">Registrasi gagal. {{ error_message }}</span>
+                <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
               </div>
-            </div>
+              {% endif %}
+
+              <div class="input-group input-group-outline mb-3">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" minlength="8" required 
+                       oninvalid="this.setCustomValidity('Password minimal 8 karakter')" 
+                       oninput="this.setCustomValidity('')" />
+                <small class="text-danger" id="passwordError" style="display: none;">Password minimal 8 karakter</small>
+              </div>
+
+              <div class="input-group input-group-outline mb-3">
+                <label class="form-label" for="confirm_password">Confirm Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required 
+                       oninput="validateConfirmPassword()" />
+                <small class="text-danger" id="confirmPasswordError" style="display: none;">Password tidak cocok</small>
+              </div>
+
+              <div class="text-center">
+                <button type="submit" class="btn btn-lg bg-gradient-custom btn-lg w-100 mt-4 mb-0">Daftar</button>
+              </div>
+            </form>
+          </div>
+          <div class="card-footer text-center pt-0 px-lg-2 px-1">
+            <p class="mb-2 text-sm mx-auto">
+              Sudah memiliki akun?
+              <a href="{{ url_for('login') }}" class="text-success text-gradient font-weight-bold">Masuk</a>
+            </p>
           </div>
         </div>
-
-      <footer class="footer position-absolute bottom-2 py-2 w-100">
-        <div class="container">
-          <div class="row align-items-center justify-content-lg-between">
-            <div class="col-12 col-md-12 my-auto">
-              <div class="copyright text-center text-sm text-white text-lg-center">
-                © Copyright
-                <script>
-                  document.write(new Date().getFullYear());
-                </script>
-                , Toko Buah
-                <a href="https://www.creative-tim.com" class="font-weight-bold text-white" target="_blank">Bu Yanti</a>
-                All rights reserved.
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      </div>
     </div>
-    
-    {% endblock %}
+  </div>
+</div>
+
+<footer class="footer position-absolute bottom-2 py-2 w-100">
+  <div class="container">
+    <div class="row align-items-center justify-content-lg-between">
+      <div class="col-12 col-md-12 my-auto">
+        <div class="copyright text-center text-sm text-white text-lg-center">
+          © Copyright
+          <script>
+            document.write(new Date().getFullYear());
+          </script>
+          , Toko Buah
+          <a href="https://www.creative-tim.com" class="font-weight-bold text-white" target="_blank">Bu Yanti</a>
+          All rights reserved.
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% endblock %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+  const confirmPasswordInput = document.getElementById('confirm_password');
+  const usernameError = document.getElementById('usernameError');
+  const passwordError = document.getElementById('passwordError');
+  const confirmPasswordError = document.getElementById('confirmPasswordError');
+
+  usernameInput.addEventListener('input', function() {
+    if (usernameInput.validity.valid) {
+      usernameError.style.display = 'none';
+    } else {
+      usernameError.style.display = 'block';
+    }
+  });
+
+  passwordInput.addEventListener('input', function() {
+    if (passwordInput.validity.valid) {
+      passwordError.style.display = 'none';
+    } else {
+      passwordError.style.display = 'block';
+    }
+  });
+
+  confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+
+  function validateConfirmPassword() {
+    if (confirmPasswordInput.value === passwordInput.value) {
+      confirmPasswordError.style.display = 'none';
+    } else {
+      confirmPasswordError.style.display = 'block';
+    }
+  }
+});
+</script>

@@ -82,6 +82,42 @@ def loginAdmin():
         flash('Invalid username or password')
     return render_template('admin/login.html')
 
+# Halaman register
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        if password != confirm_password:
+            flash("Passwords do not match.")
+            return render_template('page/register.html', registration_failed=True, error_message="Password Tidak Benar.")
+        
+        existing_user = db.users.find_one({'username': username})
+        if existing_user:
+            flash("Username already exists.")
+            return render_template('page/register.html', registration_failed=True, error_message="Username Sudah Ada.")
+        
+        hashed_password = generate_password_hash(password)
+        user_document = {
+            '_id': username,
+            'username': username,
+            'password': hashed_password,
+            'role': 'user',
+            'password_length': len(password)
+        }
+        
+        try:
+            db.users.insert_one(user_document)
+            flash("Registration successful. Please log in.")
+            return redirect(url_for('login'))
+        except Exception as e:
+            flash(f"An error occurred: {e}")
+            return render_template('page/register.html', registration_failed=True, error_message=str(e))
+    
+    return render_template('page/register.html')
+
 # Halaman Create Admin dan User
 @app.route('/user')
 @login_required
@@ -153,44 +189,6 @@ def editUser(_id):
 def deleteUser(_id):
     db.users.delete_one({"_id": _id})
     return redirect(url_for("user"))
-
-
-
-# Halaman register
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        confirm_password = request.form['confirm_password']
-        
-        if password != confirm_password:
-            flash("Passwords do not match.")
-            return render_template('page/register.html', registration_failed=True, error_message="Password Tidak Benar.")
-        
-        existing_user = db.users.find_one({'username': username})
-        if existing_user:
-            flash("Username already exists.")
-            return render_template('page/register.html', registration_failed=True, error_message="Username Sudah Ada.")
-        
-        hashed_password = generate_password_hash(password)
-        user_document = {
-            '_id': username,
-            'username': username,
-            'password': hashed_password,
-            'role': 'user',
-            'password_length': len(password)
-        }
-        
-        try:
-            db.users.insert_one(user_document)
-            flash("Registration successful. Please log in.")
-            return redirect(url_for('login'))
-        except Exception as e:
-            flash(f"An error occurred: {e}")
-            return render_template('page/register.html', registration_failed=True, error_message=str(e))
-    
-    return render_template('page/register.html')
 
 
 # Halaman logout
