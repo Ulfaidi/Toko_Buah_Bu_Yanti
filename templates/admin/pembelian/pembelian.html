@@ -407,6 +407,8 @@
   function generateInvoice() {
     const selectedSupplierId = document.getElementById("supplierSelect").value;
     const selectedSupplierName = document.getElementById("supplierSelect").options[document.getElementById("supplierSelect").selectedIndex].text;
+    const selectedSupplierAddress = document.getElementById("supplierAlamat").value;
+    const selectedSupplierPhone = document.getElementById("supplierNo").value;
     const invoiceWindow = window.open("", "Invoice", "height=600,width=800");
     let invoiceContent = `
     <html>
@@ -441,7 +443,7 @@
                                 <tr>
                                     <td class="left">
                                         ${selectedSupplierName}<br>
-                                        Jl.riau no.7 Jember - 12345676
+                                        ${selectedSupplierAddress} - ${selectedSupplierPhone}
                                     </td>
                                 </tr>
                             </table>
