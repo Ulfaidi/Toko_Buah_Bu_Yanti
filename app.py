@@ -47,6 +47,7 @@ def role_required(role):
 # Halaman login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    error_message = None
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -61,8 +62,9 @@ def login():
                 return redirect(url_for('dashboard'))
             else:
                 return redirect(url_for('home'))
+        error_message = 'Invalid username or password'
         flash('Invalid username or password')
-    return render_template('page/login.html')
+    return render_template('page/login.html', error_message=error_message)
 
 # Halaman loginAdmin
 @app.route('/loginAdmin', methods=['GET', 'POST'])
