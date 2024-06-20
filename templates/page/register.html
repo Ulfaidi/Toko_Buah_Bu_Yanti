@@ -17,36 +17,23 @@
             <p class="mb-0">Masukkan username dan password Anda untuk mendaftar !</p>
           </div>
           <div class="card-body">
-            <form role="form" method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data">
+            <form role="form" method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data" id="registrationForm" novalidate>
+              <small class="text-danger" id="usernameError" style="display: none;">Username minimal 2 karakter</small>
               <div class="input-group input-group-outline mb-3">
                 <label class="form-label" for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username" minlength="2" required 
-                       oninvalid="this.setCustomValidity('Username minimal 2 karakter')" 
-                       oninput="this.setCustomValidity('')" />
-                <small class="text-danger" id="usernameError" style="display: none;">Username minimal 2 karakter</small>
+                <input type="text" id="username" name="username" class="form-control" minlength="2" required>
               </div>
-              {% if registration_failed %}
-              <div class="alert alert-danger alert-dismissible text-white" role="alert">
-                <span class="text-sm">Registrasi gagal. {{ error_message }}</span>
-                <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              {% endif %}
 
+              <small class="text-danger" id="passwordError" style="display: none;">Password minimal 8 karakter</small>
               <div class="input-group input-group-outline mb-3">
                 <label class="form-label" for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" minlength="8" required 
-                       oninvalid="this.setCustomValidity('Password minimal 8 karakter')" 
-                       oninput="this.setCustomValidity('')" />
-                <small class="text-danger" id="passwordError" style="display: none;">Password minimal 8 karakter</small>
+                <input type="password" id="password" name="password" class="form-control" minlength="8" required>
               </div>
-
+              
+              <small class="text-danger" id="confirmPasswordError" style="display: none;">Password tidak cocok</small>
               <div class="input-group input-group-outline mb-3">
                 <label class="form-label" for="confirm_password">Confirm Password</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required 
-                       oninput="validateConfirmPassword()" />
-                <small class="text-danger" id="confirmPasswordError" style="display: none;">Password tidak cocok</small>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
               </div>
 
               <div class="text-center">
@@ -84,41 +71,44 @@
   </div>
 </footer>
 
-{% endblock %}
-
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const usernameInput = document.getElementById('username');
-  const passwordInput = document.getElementById('password');
-  const confirmPasswordInput = document.getElementById('confirm_password');
-  const usernameError = document.getElementById('usernameError');
-  const passwordError = document.getElementById('passwordError');
-  const confirmPasswordError = document.getElementById('confirmPasswordError');
+  document.addEventListener('DOMContentLoaded', function() {
+    const registrationForm = document.getElementById('registrationForm');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const usernameError = document.getElementById('usernameError');
+    const passwordError = document.getElementById('passwordError');
+    const confirmPasswordError = document.getElementById('confirmPasswordError');
 
-  usernameInput.addEventListener('input', function() {
-    if (usernameInput.validity.valid) {
-      usernameError.style.display = 'none';
-    } else {
-      usernameError.style.display = 'block';
-    }
+    registrationForm.addEventListener('submit', function(event) {
+      let valid = true;
+
+      if (usernameInput.value.length < 2) {
+        usernameError.style.display = 'block';
+        valid = false;
+      } else {
+        usernameError.style.display = 'none';
+      }
+
+      if (passwordInput.value.length < 8) {
+        passwordError.style.display = 'block';
+        valid = false;
+      } else {
+        passwordError.style.display = 'none';
+      }
+
+      if (confirmPasswordInput.value !== passwordInput.value) {
+        confirmPasswordError.style.display = 'block';
+        valid = false;
+      } else {
+        confirmPasswordError.style.display = 'none';
+      }
+
+      if (!valid) {
+        event.preventDefault();
+      }
+    });
   });
-
-  passwordInput.addEventListener('input', function() {
-    if (passwordInput.validity.valid) {
-      passwordError.style.display = 'none';
-    } else {
-      passwordError.style.display = 'block';
-    }
-  });
-
-  confirmPasswordInput.addEventListener('input', validateConfirmPassword);
-
-  function validateConfirmPassword() {
-    if (confirmPasswordInput.value === passwordInput.value) {
-      confirmPasswordError.style.display = 'none';
-    } else {
-      confirmPasswordError.style.display = 'block';
-    }
-  }
-});
 </script>
+{% endblock %}
