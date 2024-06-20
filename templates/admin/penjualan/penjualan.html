@@ -88,7 +88,7 @@
           <div class="card-header pb-0">
             <div class="row">
               <div class="col-lg-6 col-7">
-                <h6>Table Detail Penjualan</h6>
+                <h6>Tabel Detail Penjualan</h6>
               </div>
             </div>
           </div>
@@ -371,12 +371,12 @@
             <style>
                 body { font-family: Arial, sans-serif; }
                 .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); font-size: 16px; line-height: 24px; color: #555; }
-                .invoice-box table { width: 100%; line-height: inherit; text-align: left; border-collapse: collapse; }
+                .invoice-box table { width: 100%; line-height: inherit; border-collapse: collapse; }
                 .invoice-box table td { padding: 5px; vertical-align: top; }
-                .invoice-box table tr td:nth-child(2) { text-align: right; }
+                .invoice-box table tr td:nth-child(2)
                 .invoice-box table tr.top table td { padding-bottom: 20px; }
                 .invoice-box table tr.top table td.title { font-size: 45px; line-height: 45px; color: #333; }
-                .invoice-box table tr.information table td { padding-bottom: 10px; }
+                .invoice-box table tr.information table td { padding-bottom: 10px; } /* Adjust padding here */
                 .invoice-box table tr.heading td { background: #eee; border-bottom: 1px solid #ddd; font-weight: bold; }
                 .invoice-box table tr.details td { padding-bottom: 20px; }
                 .invoice-box table tr.item td { border-bottom: 1px solid #eee; }
@@ -394,9 +394,11 @@
                     <tr class="top">
                         <td colspan="4">
                             <table>
-                              <img src="../static/images/logo.png" alt="Logo" style="width: 60px; height: 60px; vertical-align: middle; margin-right: 10px" />
                                 <tr>
-                                    <td class="center" colspan="4">
+                                    <td class="center" rowspan="3">
+                                       <img src="../static/images/logo.png" alt="Logo" style="width: 60px; height: 70px; vertical-align: middle; margin-right: 10px" />
+                                    </td>
+                                    <td class="center" colspan="5">
                                         <span style="font-size: 24px; font-weight: bold;">Toko Buah Bu Yanti</span><br/>
                                         Ketraman, Adikarso, Kec. Kebumen, Kab. Kebumen, Jawa Tengah<br/>
                                         Telp. +6283870097769 Facebook: riyanti
@@ -405,18 +407,15 @@
                             </table>
                         </td>
                     </tr>
-                    <tr class="information">
-                        <td colspan="4">
-                            <table class="equal-width">
+                    <tr>
+                        <td>
+                            <table>
                                 <tr>
                                     <td class="left">
                                         Kode Penjualan
                                     </td>
                                     <td class="left">
-                                        :
-                                    </td>
-                                    <td class="left">
-                                        ${Object.keys(salesData)[0]}
+                                        : ${Object.keys(salesData)[0]}
                                     </td>
                                 </tr>
                                 <tr>
@@ -424,10 +423,7 @@
                                         Tanggal Penjualan
                                     </td>
                                     <td class="left">
-                                        :
-                                    </td>
-                                    <td class="left">
-                                        {{ current_date }}
+                                        : {{ current_date }}
                                     </td>
                                 </tr>
                             </table>
@@ -435,8 +431,9 @@
                     </tr>
                     <tr class="heading">
                         <td>Nama Produk</td>
-                        <td class="right">Harga</td>
                         <td class="right">Jumlah</td>
+                        <td class="right">Satuan</td>
+                        <td class="right">Harga</td>
                         <td class="right">Subtotal</td>
                     </tr>`;
 
@@ -445,8 +442,9 @@
         invoiceContent += `
             <tr class="item">
                 <td>${item.produk}</td>
-                <td class="right">Rp ${item.harga}</td>
                 <td class="right">${item.jumlah}</td>
+                <td class="right">${item.satuan}</td>
+                <td class="right">Rp ${item.harga}</td>
                 <td class="right">Rp ${item.total_harga}</td>
             </tr>`;
       });
@@ -456,7 +454,7 @@
 
     invoiceContent += `
                     <tr class="total">
-                        <td class="right" colspan="4">Total: Rp ${total}</td>
+                        <td class="right" colspan="5">Total: Rp ${total}</td>
                     </tr>
                 </table>
             </div>
