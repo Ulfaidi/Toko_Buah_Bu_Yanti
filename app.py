@@ -1,10 +1,11 @@
 from os.path import join, dirname
-from dotenv import load_dotenv # type: ignore
+from dotenv import load_dotenv
 from flask import Flask, request, render_template, redirect, url_for, session, flash, jsonify
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime, timedelta
+import hashlib
 import time
 from bson.objectid import ObjectId
 import random
