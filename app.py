@@ -5,7 +5,6 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime, timedelta
-import hashlib
 import time
 from bson.objectid import ObjectId
 import random
@@ -250,7 +249,7 @@ def dashboard():
     from datetime import datetime, timedelta
     import calendar
 
-    # Sales Data for Last 7 Days
+    # Data Penjualan 7 Hari Terakhir
     end_date = datetime.now()
     start_date = end_date - timedelta(days=6)
 
@@ -307,7 +306,7 @@ def dashboard():
         labels.append(indonesian_day_name)
         sales_chart_data.append(daily_sales[indonesian_day_name])
 
-    # Purchases Data for Last 12 Months
+    # Data Pembelian 12 Bulan Terakhir
     end_month = end_date.replace(day=1)
     start_month = (end_month - timedelta(days=365)).replace(day=1)
 
@@ -318,14 +317,14 @@ def dashboard():
         }
     })
 
-    # Initialize monthly purchases dictionary for the last 12 months
+    # Inisialisasi kamus pembelian bulanan selama 12 bulan terakhir
     monthly_purchases = {f"{end_month.year}-{str(end_month.month).zfill(2)}": 0}
     for i in range(1, 12):
         previous_month = (end_month - timedelta(days=i * 30)).replace(day=1)
         month_key = f"{previous_month.year}-{str(previous_month.month).zfill(2)}"
         monthly_purchases[month_key] = 0
 
-    # Calculate purchases for each month
+    # Hitung pembelian setiap bulan
     for purchase in purchases_data:
         purchase_date = datetime.strptime(purchase['tanggal_pembelian'], '%d-%m-%Y')
         month_key = f"{purchase_date.year}-{str(purchase_date.month).zfill(2)}"
@@ -333,7 +332,7 @@ def dashboard():
             total_amount = sum(item['total_harga'] for item in purchase['items'])
             monthly_purchases[month_key] += total_amount
 
-    # Ensure the order of months is correct (from oldest to newest)
+    # Pastikan urutan bulan sudah benar (dari terlama hingga terbaru)
     sorted_months = sorted(monthly_purchases.keys())
     purchases_chart_data = [monthly_purchases[month] for month in sorted_months]
     purchase_labels = [month_name_translation[calendar.month_name[int(month.split('-')[1])]] for month in sorted_months]
@@ -782,26 +781,6 @@ def addPenjualan():
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
