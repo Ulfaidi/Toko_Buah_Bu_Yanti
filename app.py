@@ -141,6 +141,17 @@ def user():
     users = list(db.users.find())
     return render_template('admin/user/user.html', users=users, current_route=request.path)
 
+@app.route('/checkUserName', methods=['POST'])
+def check_user_name():
+    data = request.json
+    username = data.get('username', '')
+    
+    existing_user = db.users.find_one({'username': username})
+    if existing_user:
+        return jsonify({'exists': True})
+    else:
+        return jsonify({'exists': False})
+
 @app.route('/addUser', methods=['GET', 'POST'])
 @login_required
 @role_required('admin')
