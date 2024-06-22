@@ -419,6 +419,18 @@ def addProduct():
 
     return render_template('admin/product/addProduct.html', product_exists=product_exists)
 
+@app.route('/checkProductName', methods=['POST'])
+def check_product_name():
+    data = request.json
+    product_name = data.get('nama', '')
+    
+    existing_product = db.products.find_one({'nama': product_name})
+    if existing_product:
+        return jsonify({'exists': True})
+    else:
+        return jsonify({'exists': False})
+
+
 @app.route('/editProduct/<_id>', methods=['GET', 'POST'])
 @login_required
 @role_required('admin')
