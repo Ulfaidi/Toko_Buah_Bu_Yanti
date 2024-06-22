@@ -120,6 +120,10 @@
       return false;
     };
 
+    const checkInputsNotEmpty = function() {
+      return namaInput.value.trim() !== '' && hargaInput.value.trim() !== '' && deskripsiInput.value.trim() !== '';
+    };
+
     const checkNameAndToggleButton = function() {
       const productName = namaInput.value.trim();
       if (productName !== '' && productName !== originalValues.nama) {
@@ -137,12 +141,12 @@
             submitBtn.disabled = true;
           } else {
             nameError.style.display = 'none';
-            submitBtn.disabled = !checkForChanges();
+            submitBtn.disabled = !(checkForChanges() && checkInputsNotEmpty());
           }
         });
       } else {
         nameError.style.display = 'none';
-        submitBtn.disabled = !checkForChanges();
+        submitBtn.disabled = !(checkForChanges() && checkInputsNotEmpty());
       }
     };
 
