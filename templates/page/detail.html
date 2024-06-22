@@ -38,7 +38,7 @@
           <h5>{{ product.deskripsi }}</h5>
         </div>
         <div class="mt-4 d-flex justify-content-end">
-          <a href="https://wa.me/+6283870097769" target="_blank" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fab fa-whatsapp fa-lg me-2 text-primary"></i>Pesan Sekarang</a>
+          <a href="https://wa.me/+6283870097769?text=Halo%20saya%20ingin%20memesan%20{{ product.nama }}.%20Harga:%20Rp{{ product.harga }}%20per%20{{ product.satuan }}.%20Stok:%20{% if product.stok > 0 %}{{ product.stok }}%20{{ product.satuan }}%20tersedia{% else %}Tidak%20Tersedia{% endif %}.%20Berapa%20banyak%20yang%20ingin%20saya%20pesan?" target="_blank" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fab fa-whatsapp fa-lg me-2 text-primary"></i>Pesan Sekarang</a>
         </div>
       </div>
     </div>

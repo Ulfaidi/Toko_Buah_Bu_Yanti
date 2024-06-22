@@ -1,12 +1,10 @@
-{% extends 'admin/templates/base.html' %}
-{% block content %}
+{% extends 'admin/templates/base.html' %} {% block content %}
 
 <div class="page-header min-vh-100">
   <div class="container">
     <div class="row">
       <div class="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
-        <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center"
-             style="background-image: url('../static/images/backgroundlogin.png'); background-size: cover">
+        <div class="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center" style="background-image: url('../static/images/backgroundlogin.png'); background-size: cover">
           <span class="mask bg-gradient-dark opacity-3"></span>
         </div>
       </div>
@@ -18,22 +16,25 @@
           </div>
           <div class="card-body">
             <form role="form" method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data" id="registrationForm" novalidate>
-              <small class="text-danger" id="usernameError" style="display: none;">Username minimal 2 karakter</small>
+              {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+              <small class="text-danger">{{ message }}</small>
+              {% endfor %} {% endif %} {% endwith %}
+              <small class="text-danger" id="usernameError" style="display: none">Username minimal 2 karakter</small>
               <div class="input-group input-group-outline mb-3">
                 <label class="form-label" for="username">Username</label>
-                <input type="text" id="username" name="username" class="form-control" minlength="2" required>
+                <input type="text" id="username" name="username" class="form-control" minlength="2" required />
               </div>
 
-              <small class="text-danger" id="passwordError" style="display: none;">Password minimal 8 karakter</small>
+              <small class="text-danger" id="passwordError" style="display: none">Password minimal 8 karakter</small>
               <div class="input-group input-group-outline mb-3">
                 <label class="form-label" for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" minlength="8" required>
+                <input type="password" id="password" name="password" class="form-control" minlength="8" required />
               </div>
-              
-              <small class="text-danger" id="confirmPasswordError" style="display: none;">Password tidak cocok</small>
+
+              <small class="text-danger" id="confirmPasswordError" style="display: none">Password tidak cocok</small>
               <div class="input-group input-group-outline mb-3">
                 <label class="form-label" for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required />
               </div>
 
               <div class="text-center">
@@ -72,37 +73,37 @@
 </footer>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const registrationForm = document.getElementById('registrationForm');
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirm_password');
-    const usernameError = document.getElementById('usernameError');
-    const passwordError = document.getElementById('passwordError');
-    const confirmPasswordError = document.getElementById('confirmPasswordError');
+  document.addEventListener("DOMContentLoaded", function () {
+    const registrationForm = document.getElementById("registrationForm");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirm_password");
+    const usernameError = document.getElementById("usernameError");
+    const passwordError = document.getElementById("passwordError");
+    const confirmPasswordError = document.getElementById("confirmPasswordError");
 
-    registrationForm.addEventListener('submit', function(event) {
+    registrationForm.addEventListener("submit", function (event) {
       let valid = true;
 
       if (usernameInput.value.length < 2) {
-        usernameError.style.display = 'block';
+        usernameError.style.display = "block";
         valid = false;
       } else {
-        usernameError.style.display = 'none';
+        usernameError.style.display = "none";
       }
 
       if (passwordInput.value.length < 8) {
-        passwordError.style.display = 'block';
+        passwordError.style.display = "block";
         valid = false;
       } else {
-        passwordError.style.display = 'none';
+        passwordError.style.display = "none";
       }
 
       if (confirmPasswordInput.value !== passwordInput.value) {
-        confirmPasswordError.style.display = 'block';
+        confirmPasswordError.style.display = "block";
         valid = false;
       } else {
-        confirmPasswordError.style.display = 'none';
+        confirmPasswordError.style.display = "none";
       }
 
       if (!valid) {

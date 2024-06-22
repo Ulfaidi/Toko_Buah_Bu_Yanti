@@ -103,13 +103,13 @@ def register():
         confirm_password = request.form['confirm_password']
         
         if password != confirm_password:
-            flash("Passwords do not match.")
-            return render_template('page/register.html', registration_failed=True, error_message="Password Tidak Benar.")
+            flash("Passwords do not match.", 'error')
+            return render_template('page/register.html')
         
         existing_user = db.users.find_one({'username': username})
         if existing_user:
-            flash("Username already exists.")
-            return render_template('page/register.html', registration_failed=True, error_message="Username Sudah Ada.")
+            flash("Username already exists.", 'error')
+            return render_template('page/register.html')
         
         hashed_password = generate_password_hash(password)
         user_document = {
@@ -122,11 +122,14 @@ def register():
         
         try:
             db.users.insert_one(user_document)
-            flash("Registration successful. Please log in.")
+            flash("Registration successful. Please log in.", 'success')
             return redirect(url_for('login'))
         except Exception as e:
-            flash(f"An error occurred: {e}")
-            return render_template('page/register.html', registration_failed=True, error_message=str(e))
+            if 'duplicate key error' in str(e):
+                flash("Nama pengguna sudah ada.", 'error')
+            else:
+                flash(f"Terjadi kesalahan: {str(e)}", 'error')
+            return render_template('page/register.html')
     
     return render_template('page/register.html')
 
