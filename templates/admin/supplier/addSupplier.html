@@ -1,5 +1,4 @@
-{% extends 'admin/templates/base.html' %} 
-{% block content %}
+{% extends 'admin/templates/base.html' %} {% block content %}
 
 <div class="row">
   <div class="col-12">
@@ -12,20 +11,13 @@
       <div class="card-body px-0 pb-2">
         <div class="table-responsive p-0">
           <div class="container mt-5">
-            {% if supplier_exists %}
-            <div class="alert alert-danger alert-dismissible text-white" role="alert">
-              <span class="text-sm">Supplier sudah ada <a href="#nama" class="alert-link text-white">Nama Supplier</a>. Mohon gunakan nama supplier yang berbeda.</span>
-              <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            {% endif %}
             <form id="addSupplierForm" method="POST" action="{{ url_for('addSupplier') }}" enctype="multipart/form-data">
               <table class="table">
                 <tbody>
                   <tr>
                     <td><label for="nama">Nama Supplier :</label></td>
                     <td>
+                      <small class="text-danger" id="nameError" style="display: none">Nama Supplier sudah ada</small>
                       <div class="input-group input-group-outline">
                         <label class="form-label"></label>
                         <input type="text" class="form-control" id="nama" name="nama" required />
@@ -71,7 +63,7 @@
                   </tr>
                 </tbody>
               </table>
-              <button type="submit" class="btn btn-primary">Simpan</button>
+              <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Simpan</button>
               <a href="{{ url_for('supplier') }}" class="btn btn-secondary">Kembali</a>
             </form>
           </div>
@@ -82,31 +74,68 @@
 </div>
 
 <script>
-  document.getElementById("addSupplierForm").addEventListener("submit", function (event) {
-    event.preventDefault();
-    var form = this;
+  document.addEventListener("DOMContentLoaded", function () {
+    const namaInput = document.getElementById("nama");
+    const nameError = document.getElementById("nameError");
+    const submitBtn = document.getElementById("submitBtn");
 
-    Swal.fire({
-      title: "Apakah Anda yakin?",
-      text: "Anda akan menyimpan supplier baru!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Ya, simpan!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: "Berhasil!",
-          text: "Supplier berhasil ditambahkan.",
-          icon: "success",
-          timer: 2000,
-          timerProgressBar: true,
-          willClose: () => {
-            form.submit();
+    const checkNameAndToggleButton = function () {
+      const supplierName = namaInput.value.trim();
+
+      if (supplierName !== "") {
+        fetch("{{ url_for('check_supplier_name') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        });
+          body: JSON.stringify({ nama: supplierName }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.exists) {
+              nameError.style.display = "block";
+              submitBtn.disabled = true;
+            } else {
+              nameError.style.display = "none";
+              submitBtn.disabled = false;
+            }
+          });
+      } else {
+        nameError.style.display = "none";
+        submitBtn.disabled = true;
       }
+    };
+
+    namaInput.addEventListener("input", checkNameAndToggleButton);
+    // Pemeriksaan awal saat halaman dimuat
+    checkNameAndToggleButton();
+
+    document.getElementById("addSupplierForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+      var form = this;
+
+      Swal.fire({
+        title: "Apakah Anda yakin?",
+        text: "Anda akan menyimpan supplier baru!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, simpan!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Berhasil!",
+            text: "Supplier berhasil ditambahkan.",
+            icon: "success",
+            timer: 2000,
+            timerProgressBar: true,
+            willClose: () => {
+              form.submit();
+            },
+          });
+        }
+      });
     });
   });
 </script>

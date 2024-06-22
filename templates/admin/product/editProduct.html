@@ -12,14 +12,6 @@
       <div class="card-body px-0 pb-2">
         <div class="table-responsive p-0">
           <div class="container mt-5">
-            {% if product_exists %}
-            <div class="alert alert-danger alert-dismissible text-white" role="alert">
-              <span class="text-sm">Produk sudah ada <a href="#nama" class="alert-link text-white">Nama Barang</a>. Mohon gunakan nama barang yang berbeda.</span>
-              <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            {% endif %}
             <form id="editProductForm" method="POST" action="/editProduct/{{ data[0]._id }}" enctype="multipart/form-data">
               <input type="hidden" class="form-control" name="_id" value="{{ data[0]._id }}" />
               <table class="table">
@@ -27,6 +19,7 @@
                   <tr>
                     <td><label for="nama">Nama Produk:</label></td>
                     <td>
+                      <small class="text-danger" id="nameError" style="display: none;">Nama Produk sudah ada</small>
                       <div class="input-group input-group-outline">
                         <label class="form-label"></label>
                         <input type="text" class="form-control" id="nama" name="nama" required value="{{ data[0].nama }}" />
@@ -93,52 +86,101 @@
 </div>
 
 <script>
-  var originalValues = {
-    nama: document.getElementById("nama").value,
-    satuan: document.getElementById("satuan").value,
-    harga: document.getElementById("harga").value,
-    deskripsi: document.getElementById("deskripsi").value,
-    gambar: document.getElementById("gambar").value
-  };
-
-  function checkChanges() {
-    var currentValues = {
-      nama: document.getElementById("nama").value,
-      satuan: document.getElementById("satuan").value,
-      harga: document.getElementById("harga").value,
-      deskripsi: document.getElementById("deskripsi").value,
-      gambar: document.getElementById("gambar").value
+  document.addEventListener('DOMContentLoaded', function() {
+    const namaInput = document.getElementById('nama');
+    const satuanSelect = document.getElementById('satuan');
+    const hargaInput = document.getElementById('harga');
+    const deskripsiInput = document.getElementById('deskripsi');
+    const gambarInput = document.getElementById('gambar');
+    const nameError = document.getElementById('nameError');
+    const submitBtn = document.getElementById('submitBtn');
+    const originalValues = {
+      nama: namaInput.value.trim(),
+      satuan: satuanSelect.value,
+      harga: hargaInput.value.trim(),
+      deskripsi: deskripsiInput.value.trim()
     };
 
-    var hasChanges = Object.keys(currentValues).some(function(key) {
-      return currentValues[key] !== originalValues[key];
-    });
-
-    document.getElementById("submitBtn").disabled = !hasChanges;
-  }
-
-  document.getElementById("nama").addEventListener("input", checkChanges);
-  document.getElementById("satuan").addEventListener("change", checkChanges);
-  document.getElementById("harga").addEventListener("input", checkChanges);
-  document.getElementById("deskripsi").addEventListener("input", checkChanges);
-  document.getElementById("gambar").addEventListener("change", checkChanges);
-
-  document.getElementById('editProductForm').addEventListener('submit', function(event) {
-    event.preventDefault(); 
-    var form = this;
-
-    Swal.fire({
-      title: 'Apakah Anda yakin?',
-      text: "Anda akan menyimpan perubahan produk!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya, simpan!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        form.submit(); 
+    const checkForChanges = function() {
+      const currentValues = {
+        nama: namaInput.value.trim(),
+        satuan: satuanSelect.value,
+        harga: hargaInput.value.trim(),
+        deskripsi: deskripsiInput.value.trim()
+      };
+      
+      for (const key in originalValues) {
+        if (originalValues[key] !== currentValues[key]) {
+          return true;
+        }
       }
+      if (gambarInput.files.length > 0) {
+        return true;
+      }
+      return false;
+    };
+
+    const checkNameAndToggleButton = function() {
+      const productName = namaInput.value.trim();
+      if (productName !== '' && productName !== originalValues.nama) {
+        fetch("{{ url_for('check_product_name') }}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nama: productName })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.exists) {
+            nameError.style.display = 'block';
+            submitBtn.disabled = true;
+          } else {
+            nameError.style.display = 'none';
+            submitBtn.disabled = !checkForChanges();
+          }
+        });
+      } else {
+        nameError.style.display = 'none';
+        submitBtn.disabled = !checkForChanges();
+      }
+    };
+
+    namaInput.addEventListener('input', checkNameAndToggleButton);
+    satuanSelect.addEventListener('change', checkNameAndToggleButton);
+    hargaInput.addEventListener('input', checkNameAndToggleButton);
+    deskripsiInput.addEventListener('input', checkNameAndToggleButton);
+    gambarInput.addEventListener('change', checkNameAndToggleButton);
+
+    // Initial check when the page loads
+    checkNameAndToggleButton();
+
+    document.getElementById("editProductForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      var form = this;
+
+      Swal.fire({
+        title: "Apakah Anda yakin?",
+        text: "Anda akan menyimpan perubahan produk!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, simpan!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Berhasil!",
+            text: "Produk berhasil diperbarui.",
+            icon: "success",
+            timer: 2000,
+            timerProgressBar: true,
+            willClose: () => {
+              form.submit();
+            },
+          });
+        }
+      });
     });
   });
 </script>

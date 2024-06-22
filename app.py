@@ -446,7 +446,7 @@ def editProduct(_id):
         nama_gambar = request.files['gambar']
         stok = int(request.form.get('stok', 0))
 
-        # Periksa apakah Nama Barang dengan nama yang sama sudah ada
+        # Periksa apakah Nama Barang dengan nama yang sama sudah ada, kecuali produk yang sedang diedit
         existing_product = db.products.find_one({'nama': nama, '_id': {'$ne': ObjectId(id)}})
         if existing_product:
             product_exists = True
@@ -455,7 +455,8 @@ def editProduct(_id):
                 'nama': nama,
                 'satuan': satuan,
                 'harga': harga,
-                'deskripsi': deskripsi
+                'deskripsi': deskripsi,
+                'stok': stok
             }
 
             if nama_gambar:
@@ -507,6 +508,17 @@ def deleteProduct(_id):
 def supplier():
     suppliers = list(db.suppliers.find())
     return render_template('admin/supplier/supplier.html', suppliers=suppliers, current_route=request.path)
+
+@app.route('/checkSupplierName', methods=['POST'])
+def check_supplier_name():
+    data = request.json
+    supplier_name = data.get('nama', '')
+    
+    existing_supplier = db.suppliers.find_one({'nama': supplier_name})
+    if existing_supplier:
+        return jsonify({'exists': True})
+    else:
+        return jsonify({'exists': False})
 
 @app.route('/addSupplier', methods=['GET','POST'])
 @login_required
