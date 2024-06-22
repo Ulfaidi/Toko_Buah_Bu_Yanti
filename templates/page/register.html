@@ -63,7 +63,6 @@
             document.write(new Date().getFullYear());
           </script>
           , Toko Buah
-          <a href="https://www.creative-tim.com" class="font-weight-bold text-white" target="_blank">Bu Yanti</a>
           All rights reserved.
         </div>
       </div>
@@ -85,7 +84,6 @@
     registrationForm.addEventListener("submit", function (event) {
       let valid = true;
 
-      // Validasi panjang username
       if (usernameInput.value.length < 2) {
         usernameError.style.display = "block";
         valid = false;
@@ -93,7 +91,6 @@
         usernameError.style.display = "none";
       }
 
-      // Validasi panjang password
       if (passwordInput.value.length < 8) {
         passwordError.style.display = "block";
         valid = false;
@@ -101,7 +98,6 @@
         passwordError.style.display = "none";
       }
 
-      // Validasi konfirmasi password
       if (confirmPasswordInput.value !== passwordInput.value) {
         confirmPasswordError.style.display = "block";
         valid = false;
@@ -109,36 +105,28 @@
         confirmPasswordError.style.display = "none";
       }
 
-      // Prevent default form submission if not valid
       if (!valid) {
         event.preventDefault();
       }
     });
 
-    // Event listener untuk input username
     usernameInput.addEventListener("input", function () {
       const username = usernameInput.value.trim();
       if (username.length >= 2) {
-        // Sembunyikan pesan error nama pengguna
         usernameError.style.display = "none";
       } else {
-        // Tampilkan pesan error nama pengguna
         usernameError.style.display = "block";
       }
     });
 
-    // Event listener untuk input password
     passwordInput.addEventListener("input", function () {
       const password = passwordInput.value.trim();
       if (password.length >= 8) {
-        // Sembunyikan pesan error password
         passwordError.style.display = "none";
       } else {
-        // Tampilkan pesan error password
         passwordError.style.display = "block";
       }
 
-      // Validasi konfirmasi password saat input password berubah
       if (confirmPasswordInput.value !== password) {
         confirmPasswordError.style.display = "block";
       } else {
@@ -146,15 +134,12 @@
       }
     });
 
-    // Event listener untuk input konfirmasi password
     confirmPasswordInput.addEventListener("input", function () {
       const confirmPassword = confirmPasswordInput.value.trim();
       const password = passwordInput.value.trim();
       if (confirmPassword !== password) {
-        // Tampilkan pesan error konfirmasi password
         confirmPasswordError.style.display = "block";
       } else {
-        // Sembunyikan pesan error konfirmasi password
         confirmPasswordError.style.display = "none";
       }
     });
