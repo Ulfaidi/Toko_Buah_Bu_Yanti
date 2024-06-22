@@ -1,5 +1,4 @@
-{% extends 'admin/templates/base.html' %}
-{% block content %}
+{% extends 'admin/templates/base.html' %} {% block content %}
 
 <div class="page-header min-vh-100">
   <div class="container">
@@ -17,7 +16,7 @@
           </div>
           <div class="card-body">
             <form role="form" method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data" id="registrationForm" novalidate>
-              <small class="text-danger" id="nameError" style="display: none;">Nama Pengguna sudah ada</small>
+              <small class="text-danger" id="nameError" style="display: none">Nama Pengguna sudah ada</small>
               <small class="text-danger" id="usernameError" style="display: none">Username minimal 2 karakter</small>
               <div class="input-group input-group-outline mb-3">
                 <label class="form-label" for="username">Username</label>
@@ -62,8 +61,7 @@
           <script>
             document.write(new Date().getFullYear());
           </script>
-          , Toko Buah
-          All rights reserved.
+          , Toko Buah All rights reserved.
         </div>
       </div>
     </div>
@@ -141,6 +139,28 @@
         confirmPasswordError.style.display = "block";
       } else {
         confirmPasswordError.style.display = "none";
+      }
+    });
+    usernameInput.addEventListener("input", function () {
+      const username = usernameInput.value.trim();
+      if (username.length >= 2) {
+        fetch("{{ url_for('check_user_name') }}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: username }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.exists) {
+              nameError.style.display = "block";
+            } else {
+              nameError.style.display = "none";
+            }
+          });
+      } else {
+        nameError.style.display = "none";
       }
     });
   });
