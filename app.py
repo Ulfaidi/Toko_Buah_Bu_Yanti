@@ -27,7 +27,7 @@ app.secret_key = 'supersecretkey'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 
 
-# Login required decorator
+# Diperlukan login dekorator
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -43,7 +43,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# Role required decorator
+# Peran dekorator diperlukan
 def role_required(role):
     def decorator(f):
         @wraps(f)
@@ -186,7 +186,7 @@ def editUser(_id):
         if password:
             hashed_password = generate_password_hash(password)
             update_fields['password'] = hashed_password
-            update_fields['password_length'] = len(password)  # Store the length of the new password
+            update_fields['password_length'] = len(password)
 
         try:
             db.users.update_one({"_id": _id}, {"$set": update_fields})
@@ -211,12 +211,6 @@ def deleteUser(_id):
 def logoutAdmin():
     session.clear()
     return redirect(url_for('loginAdmin'))
-
-# Halaman logout
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
 
 @app.route('/')
 def home():
@@ -379,6 +373,17 @@ def product():
     products = list(db.products.find())
     return render_template('admin/product/product.html', products=products, current_route=request.path)
 
+@app.route('/checkProductName', methods=['POST'])
+def check_product_name():
+    data = request.json
+    product_name = data.get('nama', '')
+    
+    existing_product = db.products.find_one({'nama': product_name})
+    if existing_product:
+        return jsonify({'exists': True})
+    else:
+        return jsonify({'exists': False})
+    
 @app.route('/addProduct', methods=['GET','POST'])
 @login_required
 @role_required('admin')
@@ -418,18 +423,6 @@ def addProduct():
             return redirect(url_for("product"))
 
     return render_template('admin/product/addProduct.html', product_exists=product_exists)
-
-@app.route('/checkProductName', methods=['POST'])
-def check_product_name():
-    data = request.json
-    product_name = data.get('nama', '')
-    
-    existing_product = db.products.find_one({'nama': product_name})
-    if existing_product:
-        return jsonify({'exists': True})
-    else:
-        return jsonify({'exists': False})
-
 
 @app.route('/editProduct/<_id>', methods=['GET', 'POST'])
 @login_required
