@@ -143,9 +143,9 @@
     // Pemeriksaan awal saat halaman dimuat
     checkNameAndToggleButton();
 
-    document.getElementById("editSupplierForm").addEventListener("submit", function(event) {
+    submitBtn.addEventListener('click', function(event) {
       event.preventDefault();
-      var form = this;
+      var form = document.getElementById("editSupplierForm");
 
       Swal.fire({
         title: "Apakah Anda yakin?",
